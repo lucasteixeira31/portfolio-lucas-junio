@@ -79,9 +79,14 @@ video {
 }
 
 .links-menu a:hover,
-.links-menu a:focus {
+.links-menu a:focus,
+.links-menu a.link-ativo {
   color: #ffffff;
   background: rgba(56, 189, 248, 0.14);
+}
+
+.links-menu a.link-ativo {
+  border: 1px solid rgba(125, 211, 252, 0.2);
 }
 
 .botao-menu {
@@ -158,6 +163,22 @@ video {
   border: 1px solid rgba(148, 163, 184, 0.18);
   border-radius: 20px;
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+  transition: 0.35s ease;
+}
+
+.secao:hover {
+  border-color: rgba(125, 211, 252, 0.28);
+  transform: translateY(-3px);
+}
+
+.secao-animada {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.secao-animada.secao-visivel {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .card-principal {
@@ -250,6 +271,11 @@ video {
   background: rgba(30, 41, 59, 0.72);
   border: 1px solid rgba(148, 163, 184, 0.14);
   border-radius: 14px;
+  transition: 0.25s;
+}
+
+.grupo-tecnologias:hover {
+  border-color: rgba(125, 211, 252, 0.24);
 }
 
 .grupo-tecnologias ul {
@@ -276,6 +302,12 @@ video {
   background: rgba(30, 41, 59, 0.72);
   border: 1px solid rgba(148, 163, 184, 0.14);
   border-radius: 14px;
+  transition: 0.25s;
+}
+
+.card-projeto:hover {
+  border-color: rgba(125, 211, 252, 0.24);
+  transform: translateY(-2px);
 }
 
 .card-projeto p {
@@ -416,5 +448,20 @@ video {
   .acoes-inicio a {
     width: 100%;
     text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  * {
+    transition: none;
+  }
+
+  .secao-animada {
+    opacity: 1;
+    transform: none;
   }
 }
