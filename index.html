@@ -20,20 +20,42 @@
     <nav id="menu-principal" class="menu-lateral" aria-label="Menu principal">
       <h2 class="titulo-menu">Lucas Junio</h2>
       <ul class="links-menu">
-        <li><a href="#inicio">Início</a></li>
-        <li><a href="#sobre">Sobre</a></li>
-        <li><a href="#tecnologias">Tecnologias</a></li>
-        <li><a href="#projetos">Projetos</a></li>
-        <li><a href="#formacao">Formação</a></li>
-        <li><a href="#contato">Contato</a></li>
+        <li><a href="#inicio" data-curto="INI">Início</a></li>
+        <li><a href="#sobre" data-curto="SOB">Sobre</a></li>
+        <li><a href="#tecnologias" data-curto="TEC">Tecnologias</a></li>
+        <li><a href="#projetos" data-curto="PRO">Projetos</a></li>
+        <li><a href="#formacao" data-curto="FOR">Formação</a></li>
+        <li><a href="#contato" data-curto="CON">Contato</a></li>
       </ul>
     </nav>
 
     <main class="conteudo-principal">
       <section id="inicio" class="secao card-principal">
+        <div class="avatar-fundo" aria-hidden="true">
+          <img class="avatar-tronco" src="./assets/images/tronco-avatar-roxo.png" alt="">
+          <div class="avatar-rosto">
+            <img class="imagem-rosto" src="./assets/images/rosto-avatar-roxo.png" alt="">
+            <span class="olho-avatar olho-avatar-esquerdo">
+              <span class="pupila-avatar"></span>
+            </span>
+            <span class="olho-avatar olho-avatar-direito">
+              <span class="pupila-avatar"></span>
+            </span>
+            <img class="sobrancelha-avatar sobrancelha-avatar-esquerda" src="./assets/images/sobrancelha-esquerda.png"
+              alt="">
+            <img class="sobrancelha-avatar sobrancelha-avatar-direita" src="./assets/images/sobrancelha-direita.png"
+              alt="">
+          </div>
+        </div>
         <div class="inicio-conteudo">
           <div class="texto-inicio">
+            <p class="etiqueta-inicio">Portfólio pessoal</p>
             <h1>Lucas Junio</h1>
+            <div class="badges-inicio">
+              <span>Ciência da Computação</span>
+              <span>Desenvolvimento de sistemas</span>
+              <span>Em evolução</span>
+            </div>
             <p>
               Estudante de Ciência da Computação na PUC, focado em desenvolvimento
               geral de sistemas, aplicações web e soluções digitais.
@@ -42,13 +64,36 @@
               Construindo projetos simples, organizados e úteis enquanto evoluo
               como desenvolvedor.
             </p>
+
+            <div class="widgets-inicio">
+              <article>
+                <span>01</span>
+                <strong>Estudante de CC</strong>
+                <p>PUC</p>
+              </article>
+              <article>
+                <span>02</span>
+                <strong>Desenvolvimento</strong>
+                <p>Sistemas e web</p>
+              </article>
+              <article>
+                <span>03</span>
+                <strong>Portfólio</strong>
+                <p>Em construção</p>
+              </article>
+              <article>
+                <span>04</span>
+                <strong>Foco atual</strong>
+                <p>Projetos práticos</p>
+              </article>
+            </div>
+
             <div class="acoes-inicio">
               <a href="https://github.com/lucasteixeira31" target="_blank" rel="noopener noreferrer">GitHub</a>
               <a href="#contato">Contato</a>
             </div>
           </div>
 
-          <img class="foto-perfil" src="./assets/images/perfil.jfif" alt="Foto de perfil de Lucas Junio">
         </div>
       </section>
 
@@ -128,9 +173,9 @@
             Página estática desenvolvida com HTML, CSS e JavaScript para apresentar
             minha trajetória, tecnologias e projetos.
           </p>
-          <p><strong>Status:</strong> Em desenvolvimento</p>
+          <p><strong>Status:</strong> <span class="status-projeto status-andamento">Em desenvolvimento</span></p>
           <p><strong>Tecnologias:</strong> HTML, CSS e JavaScript</p>
-          <p>Repositório em breve</p>
+          <p class="repositorio-breve">Repositório em breve</p>
         </article>
 
         <article class="card-projeto">
@@ -139,9 +184,9 @@
             Projeto planejado para praticar rotas, organização de dados, cadastro,
             edição e exclusão de tarefas.
           </p>
-          <p><strong>Status:</strong> Planejado</p>
+          <p><strong>Status:</strong> <span class="status-projeto status-planejado">Planejado</span></p>
           <p><strong>Tecnologias previstas:</strong> Node.js, Express e PostgreSQL</p>
-          <p>Repositório em breve</p>
+          <p class="repositorio-breve">Repositório em breve</p>
         </article>
 
         <article class="card-projeto">
@@ -150,9 +195,9 @@
             Projeto planejado para praticar cadastro, listagem, edição e remoção
             de registros em uma aplicação web.
           </p>
-          <p><strong>Status:</strong> Planejado</p>
+          <p><strong>Status:</strong> <span class="status-projeto status-planejado">Planejado</span></p>
           <p><strong>Tecnologias previstas:</strong> HTML, CSS, JavaScript, Node.js e PostgreSQL</p>
-          <p>Repositório em breve</p>
+          <p class="repositorio-breve">Repositório em breve</p>
         </article>
 
         <article class="card-projeto">
@@ -161,9 +206,9 @@
             Projeto planejado para organizar informações, telas de consulta, filtros
             e controle de dados.
           </p>
-          <p><strong>Status:</strong> Planejado</p>
+          <p><strong>Status:</strong> <span class="status-projeto status-planejado">Planejado</span></p>
           <p><strong>Tecnologias previstas:</strong> JavaScript, Node.js, Express e PostgreSQL</p>
-          <p>Repositório em breve</p>
+          <p class="repositorio-breve">Repositório em breve</p>
         </article>
       </section>
 
