@@ -59,9 +59,10 @@ body::after {
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(226, 210, 255, 0.22), rgba(124, 44, 255, 0.1) 64px, transparent 150px),
+    radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(244, 232, 255, 0.3), rgba(155, 77, 255, 0.2) 70px, rgba(94, 24, 216, 0.1) 150px, transparent 245px),
     radial-gradient(circle at center, transparent 0%, rgba(5, 2, 10, 0.28) 58%, rgba(0, 0, 0, 0.72) 100%),
     linear-gradient(120deg, transparent 0%, rgba(126, 54, 255, 0.05) 45%, transparent 75%);
+  opacity: 0.86;
 }
 
 a {
@@ -72,6 +73,180 @@ a {
 img,
 video {
   max-width: 100%;
+}
+
+.holograma-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.94;
+  mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), #000 0 170px, rgba(0, 0, 0, 0.68) 245px, transparent 360px);
+  -webkit-mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), #000 0 170px, rgba(0, 0, 0, 0.68) 245px, transparent 360px);
+}
+
+.holograma-fundo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(173, 60, 255, 0.18), transparent 18%),
+    radial-gradient(circle at 78% 62%, rgba(124, 44, 255, 0.16), transparent 20%),
+    linear-gradient(90deg, transparent 0 18%, rgba(112, 34, 220, 0.08) 18.2%, transparent 18.5% 58%, rgba(183, 74, 255, 0.08) 58.2%, transparent 58.5%),
+    linear-gradient(180deg, transparent 0 28%, rgba(155, 77, 255, 0.08) 28.2%, transparent 28.4% 74%, rgba(124, 44, 255, 0.07) 74.1%, transparent 74.4%);
+  opacity: 0.42;
+}
+
+.holograma-fundo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0 36%, rgba(124, 44, 255, 0.08) 36.2%, transparent 36.6% 68%, rgba(190, 80, 255, 0.07) 68.2%, transparent 68.6%);
+  mix-blend-mode: screen;
+  opacity: 0.28;
+}
+
+.fio-energia {
+  position: absolute;
+  width: 92px;
+  height: 210px;
+  border-left: 1px solid rgba(129, 38, 255, 0.32);
+  border-bottom: 1px solid rgba(129, 38, 255, 0.26);
+  opacity: 0.58;
+  mix-blend-mode: screen;
+}
+
+.fio-energia::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid rgba(217, 166, 255, 0.58);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(178, 75, 255, 0.58);
+}
+
+.fio-energia::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: -28%;
+  width: 3px;
+  height: 62px;
+  background: linear-gradient(180deg, transparent, rgba(247, 228, 255, 0.95), rgba(174, 60, 255, 0.9), transparent);
+  border-radius: 999px;
+  box-shadow:
+    0 0 10px rgba(217, 122, 255, 0.88),
+    0 0 28px rgba(124, 44, 255, 0.72);
+  animation: energiaNoFio 2.8s linear infinite;
+}
+
+.fio-energia-um {
+  left: 23vw;
+  top: 15vh;
+}
+
+.fio-energia-dois {
+  right: 24vw;
+  top: 31vh;
+  height: 260px;
+  transform: rotate(180deg);
+}
+
+.fio-energia-tres {
+  left: 33vw;
+  bottom: 13vh;
+  height: 230px;
+  transform: rotate(90deg);
+}
+
+.fio-energia-quatro {
+  right: 8vw;
+  bottom: 11vh;
+  height: 230px;
+  animation-delay: -1.2s;
+}
+
+.ascii-holograma {
+  position: absolute;
+  max-width: 260px;
+  color: rgba(206, 135, 255, 0.26);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: clamp(0.68rem, 1vw, 0.86rem);
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-shadow: 0 0 10px rgba(155, 77, 255, 0.36);
+  mix-blend-mode: screen;
+  animation: deslocarAscii 7s steps(7, end) infinite;
+}
+
+.ascii-holograma-um {
+  left: 7vw;
+  top: 9vh;
+}
+
+.ascii-holograma-dois {
+  right: 8vw;
+  bottom: 12vh;
+  opacity: 0.54;
+  animation-delay: -2.4s;
+}
+
+@keyframes energiaNoFio {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  82% {
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translateY(260px);
+    opacity: 0;
+  }
+}
+
+@keyframes deslocarAscii {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  40% {
+    transform: translate(6px, -3px);
+  }
+
+  43% {
+    transform: translate(-10px, 2px);
+  }
+}
+
+@keyframes falhaHolograma {
+  0%,
+  82%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.34;
+  }
+
+  84% {
+    transform: translateX(12px);
+    opacity: 0.55;
+  }
+
+  86% {
+    transform: translateX(-8px);
+    opacity: 0.24;
+  }
 }
 
 /* Estrutura da pagina */
@@ -89,7 +264,7 @@ video {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  opacity: 0.98;
+  opacity: 1;
 }
 
 .fundo-codigo-simples {
@@ -99,8 +274,8 @@ video {
   pointer-events: none;
   overflow: hidden;
   opacity: 0.78;
-  mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), #000 0 130px, rgba(0, 0, 0, 0.7) 210px, transparent 330px);
-  -webkit-mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), #000 0 130px, rgba(0, 0, 0, 0.7) 210px, transparent 330px);
+  mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), #000 0 145px, rgba(0, 0, 0, 0.72) 230px, transparent 335px);
+  -webkit-mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), #000 0 145px, rgba(0, 0, 0, 0.72) 230px, transparent 335px);
 }
 
 .fundo-codigo-simples span {
@@ -141,7 +316,7 @@ video {
 /* Menu lateral */
 .menu-lateral {
   position: fixed;
-  z-index: 3;
+  z-index: 30;
   display: none;
   top: 24px;
   left: 24px;
@@ -225,7 +400,7 @@ video {
   position: fixed;
   top: 28px;
   left: 28px;
-  z-index: 4;
+  z-index: 31;
   width: 54px;
   height: 54px;
   display: none;
@@ -311,7 +486,7 @@ video {
   overflow: hidden;
   background:
     radial-gradient(circle at top right, rgba(155, 77, 255, 0.14), transparent 36%),
-    linear-gradient(145deg, rgba(18, 12, 32, 0.96), rgba(11, 7, 20, 0.94));
+    linear-gradient(145deg, rgb(18, 12, 32), rgb(11, 7, 20));
   border: 1px solid var(--borda);
   border-radius: 24px;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
@@ -353,7 +528,7 @@ video {
     radial-gradient(ellipse at 18% 18%, rgba(181, 139, 234, 0.07), transparent 34%),
     radial-gradient(ellipse at 72% 34%, rgba(124, 44, 255, 0.07), transparent 38%),
     radial-gradient(ellipse at 92% 88%, rgba(0, 0, 0, 0.52), transparent 44%),
-    linear-gradient(135deg, rgba(15, 9, 27, 0.96) 0%, rgba(9, 5, 18, 0.97) 56%, rgba(3, 2, 8, 0.99) 100%);
+    linear-gradient(135deg, rgb(15, 9, 27) 0%, rgb(9, 5, 18) 56%, rgb(3, 2, 8) 100%);
 }
 
 #inicio::after {
@@ -375,27 +550,64 @@ video {
 }
 
 #sobre {
+  overflow: visible;
+  padding-left: 34px;
   padding-right: min(38vw, 420px);
   background:
-    linear-gradient(145deg, rgba(18, 12, 32, 0.84), rgba(27, 18, 46, 0.74)),
-    radial-gradient(circle at 8% 20%, rgba(124, 44, 255, 0.15), transparent 34%);
+    radial-gradient(ellipse at 82% 52%, rgba(0, 0, 0, 0.96) 0%, rgba(2, 1, 6, 0.92) 34%, transparent 64%),
+    radial-gradient(ellipse at 0% 52%, rgba(0, 0, 0, 0.88) 0%, rgba(7, 4, 14, 0.78) 34%, transparent 58%),
+    linear-gradient(145deg, rgb(10, 6, 18), rgb(7, 4, 14)),
+    radial-gradient(circle at 8% 20%, rgba(124, 44, 255, 0.1), transparent 34%);
+}
+
+.gif-sobre-esquerda {
+  position: absolute;
+  --luz-holograma-x: 50%;
+  --luz-holograma-y: 50%;
+  left: clamp(-254px, -19.3vw, -124px);
+  top: 50%;
+  z-index: 0;
+  width: auto;
+  height: 100%;
+  max-width: min(30vw, 360px);
+  object-fit: contain;
+  object-position: left center;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  filter:
+    brightness(1.12)
+    contrast(1.48)
+    saturate(1.2);
+  transform: translateY(-50%);
+  transition: opacity 0.18s ease;
+  mask-image: radial-gradient(circle at var(--luz-holograma-x) var(--luz-holograma-y), #000 0 130px, rgba(0, 0, 0, 0.7) 205px, transparent 310px);
+  -webkit-mask-image: radial-gradient(circle at var(--luz-holograma-x) var(--luz-holograma-y), #000 0 130px, rgba(0, 0, 0, 0.7) 205px, transparent 310px);
+}
+
+.gif-sobre-esquerda.holograma-visivel {
+  opacity: 0.86;
 }
 
 .gif-sobre {
   position: absolute;
-  right: 28px;
-  top: 50%;
+  right: min(3vw, 36px);
+  top: 0;
+  bottom: 0;
   z-index: 1;
-  width: min(32vw, 360px);
-  max-height: calc(100% - 56px);
+  width: auto;
+  height: 100%;
+  max-width: min(49vw, 610px);
   object-fit: contain;
   pointer-events: none;
-  opacity: 0.62;
-  mix-blend-mode: screen;
+  opacity: 1;
+  mix-blend-mode: plus-lighter;
   filter:
-    drop-shadow(0 0 22px rgba(155, 77, 255, 0.34))
-    drop-shadow(0 0 52px rgba(124, 44, 255, 0.2));
-  transform: translateY(-50%);
+    brightness(1.22)
+    contrast(1.95)
+    saturate(1.12);
+  mask-image: linear-gradient(90deg, transparent 0 5%, #000 10% 72%, rgba(0, 0, 0, 0.45) 82%, transparent 90% 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0 5%, #000 10% 72%, rgba(0, 0, 0, 0.45) 82%, transparent 90% 100%);
 }
 
 #sobre h2,
@@ -406,13 +618,13 @@ video {
 
 #tecnologias {
   background:
-    linear-gradient(145deg, rgba(11, 7, 20, 0.84), rgba(18, 12, 32, 0.7)),
+    linear-gradient(145deg, rgb(11, 7, 20), rgb(18, 12, 32)),
     radial-gradient(circle at 90% 12%, rgba(155, 77, 255, 0.15), transparent 30%);
 }
 
 #projetos {
   background:
-    linear-gradient(145deg, rgba(18, 12, 32, 0.82), rgba(27, 18, 46, 0.72)),
+    linear-gradient(145deg, rgb(18, 12, 32), rgb(27, 18, 46)),
     radial-gradient(circle at 10% 90%, rgba(124, 44, 255, 0.16), transparent 32%);
 }
 
@@ -623,35 +835,23 @@ video {
   --luz-silhueta-x: 50%;
   --luz-silhueta-y: 50%;
   position: absolute;
-  top: -113px;
+  top: -124px;
   left: clamp(210px, 23vw, 285px);
   z-index: 7;
   width: min(22vw, 238px);
   max-width: 238px;
   aspect-ratio: 1024 / 560;
-  overflow: hidden;
+  overflow: visible;
   pointer-events: none;
   opacity: 0;
-  mix-blend-mode: screen;
   transform: translateX(-50%);
-  transition: opacity 0.16s ease;
-  mask-image: radial-gradient(circle at var(--luz-silhueta-x) var(--luz-silhueta-y), #000 0 56px, rgba(0, 0, 0, 0.74) 88px, transparent 142px);
-  -webkit-mask-image: radial-gradient(circle at var(--luz-silhueta-x) var(--luz-silhueta-y), #000 0 56px, rgba(0, 0, 0, 0.74) 88px, transparent 142px);
-}
-
-.silhueta-topo-card::before {
-  content: "";
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: 9%;
-  height: 18px;
-  z-index: 0;
-  background: linear-gradient(180deg, rgba(4, 2, 9, 0), rgba(4, 2, 9, 0.96) 42%, rgba(4, 2, 9, 0.96));
+  transition: opacity 0.18s ease;
+  mask-image: radial-gradient(circle at var(--luz-silhueta-x) var(--luz-silhueta-y), #000 0 94px, rgba(0, 0, 0, 0.74) 136px, transparent 210px);
+  -webkit-mask-image: radial-gradient(circle at var(--luz-silhueta-x) var(--luz-silhueta-y), #000 0 94px, rgba(0, 0, 0, 0.74) 136px, transparent 210px);
 }
 
 .silhueta-topo-card.silhueta-visivel {
-  opacity: 0.78;
+  opacity: 1;
 }
 
 .silhueta-topo-card img {
@@ -660,9 +860,13 @@ video {
   display: block;
   width: 100%;
   height: auto;
+  opacity: 1;
+  mix-blend-mode: screen;
   filter:
-    drop-shadow(0 0 18px rgba(155, 77, 255, 0.4))
-    drop-shadow(0 0 46px rgba(124, 44, 255, 0.2));
+    brightness(1.28)
+    contrast(1.52)
+    saturate(1.35)
+    drop-shadow(0 0 10px rgba(155, 77, 255, 0.18));
   transform: translateY(-24%);
 }
 

@@ -6,6 +6,8 @@ const avatarFundo = document.querySelector(".avatar-fundo");
 const avatarRosto = document.querySelector(".avatar-rosto");
 const olhosAvatar = document.querySelectorAll(".olho-avatar");
 const silhuetaTopoCard = document.querySelector(".silhueta-topo-card");
+const imagemSilhueta = document.querySelector(".silhueta-topo-card img");
+const imagemHologramaEsquerda = document.querySelector(".gif-sobre-esquerda");
 const areaPagina = document.documentElement;
 const simbolosCodigo = ["0", "1", "2", "3", "4", "6", "7", "8", "9", "a", "b", "d", "e", "g", "h", "m", "n", "o", "s", "t", "u", "x", "z", "+", "-", "=", "#", "{", "}", "(", ")", "<", ">"];
 const gotasCodigo = [];
@@ -21,12 +23,16 @@ let ultimoQuadroCodigo = 0;
 let esperaResizeCodigo = null;
 let larguraCodigo = window.innerWidth;
 let alturaCodigo = window.innerHeight;
-const intervaloCodigo = 1000 / 24;
+const intervaloCodigo = 1000 / 18;
 let mouseCodigoX = window.innerWidth / 2;
 let mouseCodigoY = window.innerHeight * 0.2;
-const raioLuzCodigo = 230;
+const raioLuzCodigo = 330;
 let mouseAtual = null;
 let mousePendente = false;
+let quadroSilhueta = 1;
+let animacaoSilhueta = null;
+let quadroHologramaEsquerda = 1;
+let animacaoHologramaEsquerda = null;
 
 function menuEstaAberto() {
   return pagina.classList.contains("menu-aberto");
@@ -102,6 +108,7 @@ function processarMouse() {
   mouseCodigoY = evento.clientY;
   moverLuzCard(evento);
   moverLuzSilhueta(evento);
+  moverLuzHologramaEsquerda(evento);
   moverOlhos(evento);
   moverAvatar(evento);
   mousePendente = false;
@@ -133,12 +140,31 @@ function moverLuzSilhueta(evento) {
   const distanciaX = luzX - posicao.width / 2;
   const distanciaY = luzY - posicao.height / 2;
   const distancia = Math.sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
-  const alcance = Math.max(posicao.width, posicao.height) * 0.72;
-  const visivel = luzX > -70 && luzX < posicao.width + 70 && luzY > -70 && luzY < posicao.height + 70 && distancia < alcance;
+  const alcance = Math.max(posicao.width, posicao.height) * 1.05;
+  const visivel = luzX > -120 && luzX < posicao.width + 120 && luzY > -120 && luzY < posicao.height + 120 && distancia < alcance;
 
   silhuetaTopoCard.style.setProperty("--luz-silhueta-x", luzX + "px");
   silhuetaTopoCard.style.setProperty("--luz-silhueta-y", luzY + "px");
   silhuetaTopoCard.classList.toggle("silhueta-visivel", visivel);
+}
+
+function moverLuzHologramaEsquerda(evento) {
+  if (!imagemHologramaEsquerda) {
+    return;
+  }
+
+  const posicao = imagemHologramaEsquerda.getBoundingClientRect();
+  const luzX = evento.clientX - posicao.left;
+  const luzY = evento.clientY - posicao.top;
+  const distanciaX = luzX - posicao.width / 2;
+  const distanciaY = luzY - posicao.height / 2;
+  const distancia = Math.sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
+  const alcance = Math.max(posicao.width, posicao.height) * 0.68;
+  const visivel = luzX > -120 && luzX < posicao.width + 120 && luzY > -120 && luzY < posicao.height + 120 && distancia < alcance;
+
+  imagemHologramaEsquerda.style.setProperty("--luz-holograma-x", luzX + "px");
+  imagemHologramaEsquerda.style.setProperty("--luz-holograma-y", luzY + "px");
+  imagemHologramaEsquerda.classList.toggle("holograma-visivel", visivel);
 }
 
 function criarFundoCodigo() {
@@ -165,15 +191,15 @@ function criarFundoCodigo() {
   cameraCodigo.updateProjectionMatrix();
   renderizadorCodigo.setSize(larguraCodigo, alturaCodigo, false);
 
-  const espacoColuna = larguraCodigo <= 700 ? 7 : 9;
-  const limiteGotas = larguraCodigo <= 700 ? 150 : 280;
+  const espacoColuna = larguraCodigo <= 700 ? 4 : 4;
+  const limiteGotas = larguraCodigo <= 700 ? 230 : 520;
   const quantidadeColunas = Math.min(Math.ceil(larguraCodigo / espacoColuna) * 2, limiteGotas);
 
   for (let i = 0; i < quantidadeColunas; i++) {
     const tipoGota = Math.random();
-    const gotaMuitoGrande = tipoGota > 0.9;
-    const gotaGrande = !gotaMuitoGrande && tipoGota > 0.72;
-    const gotaMedia = !gotaMuitoGrande && !gotaGrande && tipoGota > 0.42;
+    const gotaMuitoGrande = tipoGota > 0.82;
+    const gotaGrande = !gotaMuitoGrande && tipoGota > 0.58;
+    const gotaMedia = !gotaMuitoGrande && !gotaGrande && tipoGota > 0.28;
     const tamanho = 24;
     const fonteBase = gotaMuitoGrande ? 32 + Math.random() * 14 : gotaGrande ? 23 + Math.random() * 9 : gotaMedia ? 15 + Math.random() * 6 : 10 + Math.random() * 4;
     const fonte = larguraCodigo <= 700 ? fonteBase * 0.82 : fonteBase;
@@ -218,7 +244,7 @@ function prepararCenaCodigo() {
   }
 
   usaThreeCodigo = true;
-  renderizadorCodigo.setPixelRatio(0.75);
+  renderizadorCodigo.setPixelRatio(0.62);
   renderizadorCodigo.domElement.classList.add("fundo-codigo");
   document.body.prepend(renderizadorCodigo.domElement);
 
@@ -249,8 +275,8 @@ function criarLetraCodigo(neon, fonte) {
   const material = new THREE.SpriteMaterial({
     map: pegarTexturaCodigo(simbolo, neon),
     transparent: true,
-    opacity: neon ? 0.98 : 0.62,
-    color: neon ? 0xf7efff : 0x8f24ff,
+    opacity: neon ? 1 : 0.86,
+    color: neon ? 0xf4e8ff : 0xa42cff,
     blending: THREE.AdditiveBlending,
     depthWrite: false
   });
@@ -286,15 +312,16 @@ function criarTexturaCodigo(simbolo, neon) {
   contexto.textAlign = "center";
   contexto.textBaseline = "middle";
   contexto.font = "bold 56px Consolas, 'Courier New', monospace";
-  contexto.shadowColor = neon ? "#f3dcff" : "#a42cff";
-  contexto.shadowBlur = neon ? 14 : 6;
+  contexto.shadowColor = neon ? "#f4e8ff" : "#9b35ff";
+  contexto.shadowBlur = neon ? 28 : 14;
 
   if (neon) {
     const degrade = contexto.createLinearGradient(0, 18, 0, 78);
     degrade.addColorStop(0, "#ffffff");
-    degrade.addColorStop(0.34, "#f3dcff");
-    degrade.addColorStop(0.68, "#b56cff");
-    degrade.addColorStop(1, "#6f1fff");
+    degrade.addColorStop(0.2, "#f4e8ff");
+    degrade.addColorStop(0.5, "#c56cff");
+    degrade.addColorStop(0.78, "#8f2cff");
+    degrade.addColorStop(1, "#5e18d8");
     contexto.fillStyle = degrade;
   } else {
     contexto.fillStyle = "#ffffff";
@@ -357,10 +384,10 @@ function atualizarGotaCodigo(gota) {
 
     letra.position.set(gota.x, alturaCodigo - y, gota.profundidade);
 
-    if (letra.userData.neon) {
-      letra.material.opacity = (0.82 + gota.profundidade * 0.16) * luz;
-      letra.material.color.setHex(0xf7efff);
-      letra.scale.set(gota.fonte * 1.28, gota.fonte * 1.28, 1);
+  if (letra.userData.neon) {
+      letra.material.opacity = limitarNumero((0.98 + gota.profundidade * 0.22) * luz, 0, 1);
+      letra.material.color.setHex(0xf4e8ff);
+      letra.scale.set(gota.fonte * 1.46, gota.fonte * 1.46, 1);
     } else {
       aplicarDegradeRastro(letra, finalGota, opacidade, gota.fonte, gota.profundidade, luz);
     }
@@ -373,21 +400,21 @@ function calcularLuzCodigo(x, y) {
   const distanciaFeixe = Math.sqrt(distanciaX * distanciaX * 1.8 + distanciaY * distanciaY * 0.72);
   const luz = Math.pow(1 - distanciaFeixe / raioLuzCodigo, 2.2);
 
-  return limitarNumero(0.1 + luz * 0.9, 0.1, 1);
+  return limitarNumero(luz * 1.85, 0, 1);
 }
 
 function aplicarDegradeRastro(letra, finalGota, opacidade, fonte, profundidade, luz) {
   const inicioRastro = limitarNumero(finalGota, 0, 1);
   const brilhoRastro = Math.pow(inicioRastro, 0.62);
   const caudaRastro = Math.pow(inicioRastro, 1.35);
-  const matiz = 275 + brilhoRastro * 16;
-  const saturacao = 0.78 + brilhoRastro * 0.18;
-  const luminosidade = 0.1 + brilhoRastro * 0.34 + caudaRastro * 0.12;
+  const matiz = 270 + brilhoRastro * 16;
+  const saturacao = 0.92 + brilhoRastro * 0.08;
+  const luminosidade = 0.16 + brilhoRastro * 0.46 + caudaRastro * 0.16;
   const forcaProfundidade = 0.54 + profundidade * 0.58;
   const transparencia = opacidade * (0.24 + brilhoRastro * 0.64) * forcaProfundidade * luz;
   const tamanho = fonte * (0.86 + brilhoRastro * 0.22);
 
-  letra.material.opacity = limitarNumero(transparencia, 0.04, 0.68);
+  letra.material.opacity = limitarNumero(transparencia * 1.72, 0.07, 0.94);
   letra.material.color.setHSL(matiz / 360, saturacao, luminosidade * forcaProfundidade);
   letra.scale.set(tamanho, tamanho, 1);
 }
@@ -454,6 +481,110 @@ function pararCodigo() {
 function prepararFundoCodigo() {
   clearTimeout(esperaResizeCodigo);
   esperaResizeCodigo = setTimeout(criarFundoCodigo, 180);
+}
+
+function caminhoQuadroSilhueta(numero) {
+  const quadro = String(numero).padStart(2, "0");
+
+  return "./assets/images/silhueta-neon-roxa-frame-" + quadro + ".png";
+}
+
+function prepararSilhueta() {
+  if (!imagemSilhueta) {
+    return;
+  }
+
+  const total = Number(imagemSilhueta.dataset.totalFrames || 1);
+
+  for (let i = 1; i <= total; i++) {
+    const imagem = new Image();
+    imagem.src = caminhoQuadroSilhueta(i);
+  }
+}
+
+function trocarQuadroSilhueta() {
+  if (!imagemSilhueta) {
+    return;
+  }
+
+  const total = Number(imagemSilhueta.dataset.totalFrames || 1);
+
+  quadroSilhueta += 1;
+
+  if (quadroSilhueta > total) {
+    quadroSilhueta = 1;
+  }
+
+  imagemSilhueta.src = caminhoQuadroSilhueta(quadroSilhueta);
+}
+
+function iniciarSilhueta() {
+  if (!imagemSilhueta || animacaoSilhueta) {
+    return;
+  }
+
+  animacaoSilhueta = setInterval(trocarQuadroSilhueta, 90);
+}
+
+function pararSilhueta() {
+  if (!animacaoSilhueta) {
+    return;
+  }
+
+  clearInterval(animacaoSilhueta);
+  animacaoSilhueta = null;
+}
+
+function caminhoQuadroHologramaEsquerda(numero) {
+  const quadro = String(numero).padStart(2, "0");
+
+  return "./assets/images/holograma_glitch_esquerda_frame-" + quadro + ".png";
+}
+
+function prepararHologramaEsquerda() {
+  if (!imagemHologramaEsquerda) {
+    return;
+  }
+
+  const total = Number(imagemHologramaEsquerda.dataset.totalFrames || 1);
+
+  for (let i = 1; i <= total; i++) {
+    const imagem = new Image();
+    imagem.src = caminhoQuadroHologramaEsquerda(i);
+  }
+}
+
+function trocarQuadroHologramaEsquerda() {
+  if (!imagemHologramaEsquerda) {
+    return;
+  }
+
+  const total = Number(imagemHologramaEsquerda.dataset.totalFrames || 1);
+
+  quadroHologramaEsquerda += 1;
+
+  if (quadroHologramaEsquerda > total) {
+    quadroHologramaEsquerda = 1;
+  }
+
+  imagemHologramaEsquerda.src = caminhoQuadroHologramaEsquerda(quadroHologramaEsquerda);
+}
+
+function iniciarHologramaEsquerda() {
+  if (!imagemHologramaEsquerda || animacaoHologramaEsquerda) {
+    return;
+  }
+
+  animacaoHologramaEsquerda = setInterval(trocarQuadroHologramaEsquerda, 75);
+}
+
+function pararHologramaEsquerda() {
+  if (!animacaoHologramaEsquerda) {
+    return;
+  }
+
+  clearInterval(animacaoHologramaEsquerda);
+  animacaoHologramaEsquerda = null;
 }
 
 function moverOlhos(evento) {
@@ -528,8 +659,12 @@ window.addEventListener("resize", prepararFundoCodigo);
 document.addEventListener("visibilitychange", function () {
   if (document.hidden) {
     pararCodigo();
+    pararSilhueta();
+    pararHologramaEsquerda();
   } else {
     iniciarCodigo();
+    iniciarSilhueta();
+    iniciarHologramaEsquerda();
   }
 });
 
@@ -557,5 +692,9 @@ secoes.forEach(function (secao) {
 });
 
 prepararMenu();
+prepararSilhueta();
+prepararHologramaEsquerda();
 criarFundoCodigo();
 iniciarCodigo();
+iniciarSilhueta();
+iniciarHologramaEsquerda();
