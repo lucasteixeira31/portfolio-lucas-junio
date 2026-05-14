@@ -10,6 +10,12 @@
   --roxo-forte: #9b4dff;
   --roxo-claro: #c8a2ff;
   --lilas: #e2d2ff;
+  --holograma-claro: #f4e8ff;
+  --holograma-vivo: #9b4dff;
+  --holograma-profundo: #5e18d8;
+  --holograma-glow-suave: rgba(155, 77, 255, 0.24);
+  --holograma-glow-forte: rgba(200, 162, 255, 0.34);
+  --filtro-holograma: brightness(1.16) contrast(1.48) saturate(1.18);
   --borda: rgba(155, 77, 255, 0.28);
   --borda-forte: rgba(200, 162, 255, 0.45);
   --texto: #f7f2ff;
@@ -91,8 +97,8 @@ video {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 18% 24%, rgba(173, 60, 255, 0.18), transparent 18%),
-    radial-gradient(circle at 78% 62%, rgba(124, 44, 255, 0.16), transparent 20%),
+    radial-gradient(circle at 18% 24%, rgba(155, 77, 255, 0.17), transparent 18%),
+    radial-gradient(circle at 78% 62%, rgba(94, 24, 216, 0.16), transparent 20%),
     linear-gradient(90deg, transparent 0 18%, rgba(112, 34, 220, 0.08) 18.2%, transparent 18.5% 58%, rgba(183, 74, 255, 0.08) 58.2%, transparent 58.5%),
     linear-gradient(180deg, transparent 0 28%, rgba(155, 77, 255, 0.08) 28.2%, transparent 28.4% 74%, rgba(124, 44, 255, 0.07) 74.1%, transparent 74.4%);
   opacity: 0.42;
@@ -111,9 +117,9 @@ video {
   position: absolute;
   width: 92px;
   height: 210px;
-  border-left: 1px solid rgba(129, 38, 255, 0.32);
-  border-bottom: 1px solid rgba(129, 38, 255, 0.26);
-  opacity: 0.58;
+  border-left: 1px solid rgba(155, 77, 255, 0.3);
+  border-bottom: 1px solid rgba(155, 77, 255, 0.22);
+  opacity: 0.52;
   mix-blend-mode: screen;
 }
 
@@ -124,9 +130,9 @@ video {
   top: -4px;
   width: 7px;
   height: 7px;
-  border: 1px solid rgba(217, 166, 255, 0.58);
+  border: 1px solid rgba(244, 232, 255, 0.48);
   border-radius: 50%;
-  box-shadow: 0 0 12px rgba(178, 75, 255, 0.58);
+  box-shadow: 0 0 12px var(--holograma-glow-forte);
 }
 
 .fio-energia::after {
@@ -136,11 +142,11 @@ video {
   top: -28%;
   width: 3px;
   height: 62px;
-  background: linear-gradient(180deg, transparent, rgba(247, 228, 255, 0.95), rgba(174, 60, 255, 0.9), transparent);
+  background: linear-gradient(180deg, transparent, rgba(244, 232, 255, 0.88), rgba(155, 77, 255, 0.84), transparent);
   border-radius: 999px;
   box-shadow:
-    0 0 10px rgba(217, 122, 255, 0.88),
-    0 0 28px rgba(124, 44, 255, 0.72);
+    0 0 10px var(--holograma-glow-forte),
+    0 0 28px var(--holograma-glow-suave);
   animation: energiaNoFio 2.8s linear infinite;
 }
 
@@ -173,12 +179,12 @@ video {
 .ascii-holograma {
   position: absolute;
   max-width: 260px;
-  color: rgba(206, 135, 255, 0.26);
+  color: rgba(200, 162, 255, 0.24);
   font-family: Consolas, "Courier New", monospace;
   font-size: clamp(0.68rem, 1vw, 0.86rem);
   line-height: 1.45;
   letter-spacing: 0;
-  text-shadow: 0 0 10px rgba(155, 77, 255, 0.36);
+  text-shadow: 0 0 10px var(--holograma-glow-suave);
   mix-blend-mode: screen;
   animation: deslocarAscii 7s steps(7, end) infinite;
 }
@@ -576,9 +582,8 @@ video {
   opacity: 0;
   mix-blend-mode: screen;
   filter:
-    brightness(1.12)
-    contrast(1.48)
-    saturate(1.2);
+    var(--filtro-holograma)
+    drop-shadow(0 0 10px var(--holograma-glow-suave));
   transform: translateY(-50%);
   transition: opacity 0.18s ease;
   mask-image: radial-gradient(circle at var(--luz-holograma-x) var(--luz-holograma-y), #000 0 130px, rgba(0, 0, 0, 0.7) 205px, transparent 310px);
@@ -586,7 +591,7 @@ video {
 }
 
 .gif-sobre-esquerda.holograma-visivel {
-  opacity: 0.86;
+  opacity: 0.82;
 }
 
 .gif-sobre {
@@ -600,12 +605,13 @@ video {
   max-width: min(49vw, 610px);
   object-fit: contain;
   pointer-events: none;
-  opacity: 1;
-  mix-blend-mode: plus-lighter;
+  opacity: 0.88;
+  mix-blend-mode: screen;
   filter:
     brightness(1.22)
-    contrast(1.95)
-    saturate(1.12);
+    contrast(1.54)
+    saturate(1.18)
+    drop-shadow(0 0 10px var(--holograma-glow-suave));
   mask-image: linear-gradient(90deg, transparent 0 5%, #000 10% 72%, rgba(0, 0, 0, 0.45) 82%, transparent 90% 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0 5%, #000 10% 72%, rgba(0, 0, 0, 0.45) 82%, transparent 90% 100%);
 }
@@ -851,7 +857,7 @@ video {
 }
 
 .silhueta-topo-card.silhueta-visivel {
-  opacity: 1;
+  opacity: 0.86;
 }
 
 .silhueta-topo-card img {
@@ -863,10 +869,8 @@ video {
   opacity: 1;
   mix-blend-mode: screen;
   filter:
-    brightness(1.28)
-    contrast(1.52)
-    saturate(1.35)
-    drop-shadow(0 0 10px rgba(155, 77, 255, 0.18));
+    var(--filtro-holograma)
+    drop-shadow(0 0 10px var(--holograma-glow-suave));
   transform: translateY(-24%);
 }
 

@@ -9,7 +9,7 @@ const silhuetaTopoCard = document.querySelector(".silhueta-topo-card");
 const imagemSilhueta = document.querySelector(".silhueta-topo-card img");
 const imagemHologramaEsquerda = document.querySelector(".gif-sobre-esquerda");
 const areaPagina = document.documentElement;
-const simbolosCodigo = ["0", "1", "2", "3", "4", "6", "7", "8", "9", "a", "b", "d", "e", "g", "h", "m", "n", "o", "s", "t", "u", "x", "z", "+", "-", "=", "#", "{", "}", "(", ")", "<", ">"];
+const simbolosCodigo = ["0", "1", "2", "3", "4", "6", "7", "8", "9", "a", "b", "d", "e", "g", "h", "ま", "n", "o", "カ", "t", "u", "タ", "z", "+", "-", "=", "#", "{", "}", "(", ")", "<", ">"];
 const gotasCodigo = [];
 const texturasCodigo = {};
 let renderizadorCodigo = null;
@@ -276,7 +276,7 @@ function criarLetraCodigo(neon, fonte) {
     map: pegarTexturaCodigo(simbolo, neon),
     transparent: true,
     opacity: neon ? 1 : 0.86,
-    color: neon ? 0xf4e8ff : 0xa42cff,
+    color: neon ? 0xf4e8ff : 0x9b4dff,
     blending: THREE.AdditiveBlending,
     depthWrite: false
   });
@@ -312,15 +312,15 @@ function criarTexturaCodigo(simbolo, neon) {
   contexto.textAlign = "center";
   contexto.textBaseline = "middle";
   contexto.font = "bold 56px Consolas, 'Courier New', monospace";
-  contexto.shadowColor = neon ? "#f4e8ff" : "#9b35ff";
+  contexto.shadowColor = neon ? "#f4e8ff" : "#9b4dff";
   contexto.shadowBlur = neon ? 28 : 14;
 
   if (neon) {
     const degrade = contexto.createLinearGradient(0, 18, 0, 78);
     degrade.addColorStop(0, "#ffffff");
     degrade.addColorStop(0.2, "#f4e8ff");
-    degrade.addColorStop(0.5, "#c56cff");
-    degrade.addColorStop(0.78, "#8f2cff");
+    degrade.addColorStop(0.5, "#c8a2ff");
+    degrade.addColorStop(0.78, "#9b4dff");
     degrade.addColorStop(1, "#5e18d8");
     contexto.fillStyle = degrade;
   } else {
