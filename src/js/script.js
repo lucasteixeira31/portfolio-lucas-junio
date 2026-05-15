@@ -8,8 +8,10 @@ const olhosAvatar = document.querySelectorAll(".olho-avatar");
 const silhuetaTopoCard = document.querySelector(".silhueta-topo-card");
 const imagemSilhueta = document.querySelector(".silhueta-topo-card img");
 const imagemHologramaEsquerda = document.querySelector(".gif-sobre-esquerda");
+const terminalSaida = document.querySelector(".terminal-saida");
+const terminalTexto = document.querySelector("#terminal-texto");
 const areaPagina = document.documentElement;
-const simbolosCodigo = ["0", "1", "2", "3", "4", "6", "7", "8", "9", "a", "b", "d", "e", "g", "h", "ま", "n", "o", "カ", "t", "u", "タ", "z", "+", "-", "=", "#", "{", "}", "(", ")", "<", ">"];
+const simbolosCodigo = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "H", "K", "L", "M", "N", "R", "S", "T", "X", "Y", "Z", "a", "b", "d", "e", "g", "h", "n", "o", "r", "s", "t", "u", "x", "z", "ア", "カ", "タ", "メ", "+", "-", "=", "#", "$", "%", "&", "*", "/", "\\", "|", "_", ":", ";", "{", "}", "[", "]", "(", ")", "<", ">"];
 const gotasCodigo = [];
 const texturasCodigo = {};
 let renderizadorCodigo = null;
@@ -24,8 +26,8 @@ let esperaResizeCodigo = null;
 let larguraCodigo = window.innerWidth;
 let alturaCodigo = window.innerHeight;
 const intervaloCodigo = 1000 / 18;
-let mouseCodigoX = window.innerWidth / 2;
-let mouseCodigoY = window.innerHeight * 0.2;
+let mouseCodigoX = -1000;
+let mouseCodigoY = -1000;
 const raioLuzCodigo = 330;
 let mouseAtual = null;
 let mousePendente = false;
@@ -33,6 +35,8 @@ let quadroSilhueta = 1;
 let animacaoSilhueta = null;
 let quadroHologramaEsquerda = 1;
 let animacaoHologramaEsquerda = null;
+let terminalDigitado = false;
+let esperaTerminal = null;
 
 function menuEstaAberto() {
   return pagina.classList.contains("menu-aberto");
@@ -311,20 +315,20 @@ function criarTexturaCodigo(simbolo, neon) {
   tela.height = tamanho;
   contexto.textAlign = "center";
   contexto.textBaseline = "middle";
-  contexto.font = "bold 56px Consolas, 'Courier New', monospace";
-  contexto.shadowColor = neon ? "#f4e8ff" : "#9b4dff";
-  contexto.shadowBlur = neon ? 28 : 14;
+  contexto.font = "bold 54px Consolas, 'Lucida Console', 'Courier New', monospace";
+  contexto.shadowColor = neon ? "#fff7ff" : "#a855ff";
+  contexto.shadowBlur = neon ? 30 : 18;
 
   if (neon) {
     const degrade = contexto.createLinearGradient(0, 18, 0, 78);
     degrade.addColorStop(0, "#ffffff");
-    degrade.addColorStop(0.2, "#f4e8ff");
-    degrade.addColorStop(0.5, "#c8a2ff");
-    degrade.addColorStop(0.78, "#9b4dff");
+    degrade.addColorStop(0.18, "#f6eaff");
+    degrade.addColorStop(0.48, "#c8a2ff");
+    degrade.addColorStop(0.76, "#9b4dff");
     degrade.addColorStop(1, "#5e18d8");
     contexto.fillStyle = degrade;
   } else {
-    contexto.fillStyle = "#ffffff";
+    contexto.fillStyle = "#dbc7ff";
   }
 
   contexto.fillText(simbolo, tamanho / 2, tamanho / 2 + 2);
@@ -587,6 +591,278 @@ function pararHologramaEsquerda() {
   animacaoHologramaEsquerda = null;
 }
 
+function pegarTextoTerminal() {
+  if (!terminalTexto) {
+    return "";
+  }
+
+  const informacoes = terminalTexto.content.querySelector("[data-terminal-info]");
+  const arte = terminalTexto.content.querySelector("[data-terminal-arte]");
+
+  if (!informacoes || !arte) {
+    return "";
+  }
+
+  const textoInformacoes = informacoes.textContent.replace(/\r/g, "");
+  const textoArte = centralizarAscii(arte.textContent.replace(/\r/g, ""));
+
+  if (window.innerWidth <= 900) {
+    return textoInformacoes + "\n\n" + textoArte;
+  }
+
+  return juntarColunasTerminal(textoInformacoes, textoArte);
+}
+
+function centralizarAscii(texto) {
+  const linhas = texto.split("\n");
+  let linhasAntesDoDesenho = 0;
+
+  while (linhas.length && !linhas[linhas.length - 1].trim()) {
+    linhas.pop();
+  }
+
+  while (linhasAntesDoDesenho < linhas.length && !linhas[linhasAntesDoDesenho].trim()) {
+    linhasAntesDoDesenho++;
+  }
+
+  const linhasDesenho = linhas.slice(linhasAntesDoDesenho);
+
+  alinharMundoComHello(linhasDesenho);
+
+  const linhasComTexto = linhasDesenho.filter(function (linha) {
+    return linha.trim();
+  });
+
+  const margemComum = linhasComTexto.reduce(function (menor, linha) {
+    const espacos = linha.match(/^ */)[0].length;
+
+    return Math.min(menor, espacos);
+  }, Infinity);
+
+  const desenho = linhasDesenho.map(function (linha) {
+    const semMargem = margemComum === Infinity ? linha : linha.slice(margemComum);
+
+    return semMargem.replace(/\s+$/, "");
+  }).join("\n");
+
+  return "\n".repeat(Math.min(linhasAntesDoDesenho, 6)) + desenho;
+}
+
+function alinharMundoComHello(linhas) {
+  const linhaVazia = linhas.findIndex(function (linha, indice) {
+    return indice > 0 && !linha.trim();
+  });
+
+  if (linhaVazia < 1 || linhaVazia >= linhas.length - 1) {
+    return;
+  }
+
+  const centroHello = centroLinhaAscii(linhas[0]);
+  const centroMundo = centroBlocoAscii(linhas.slice(linhaVazia + 1));
+
+  if (centroHello === null || centroMundo === null) {
+    return;
+  }
+
+  const deslocamento = Math.round(centroHello - centroMundo);
+
+  if (deslocamento <= 0) {
+    return;
+  }
+
+  for (let i = linhaVazia + 1; i < linhas.length; i++) {
+    if (linhas[i].trim()) {
+      linhas[i] = " ".repeat(deslocamento) + linhas[i];
+    }
+  }
+}
+
+function centroLinhaAscii(linha) {
+  const inicio = linha.search(/\S/);
+
+  if (inicio < 0) {
+    return null;
+  }
+
+  const fim = linha.length - linha.match(/\s*$/)[0].length - 1;
+
+  return (inicio + fim) / 2;
+}
+
+function centroBlocoAscii(linhas) {
+  let inicio = Infinity;
+  let fim = -Infinity;
+
+  linhas.forEach(function (linha) {
+    const primeiro = linha.search(/\S/);
+
+    if (primeiro < 0) {
+      return;
+    }
+
+    const ultimo = linha.length - linha.match(/\s*$/)[0].length - 1;
+
+    inicio = Math.min(inicio, primeiro);
+    fim = Math.max(fim, ultimo);
+  });
+
+  if (inicio === Infinity) {
+    return null;
+  }
+
+  return (inicio + fim) / 2;
+}
+
+function juntarColunasTerminal(textoInformacoes, textoArte) {
+  const linhasInformacoes = textoInformacoes.split("\n");
+  const linhasArte = ajustarArteComTopicos(linhasInformacoes, textoArte.split("\n"));
+  const totalLinhas = Math.max(linhasInformacoes.length, linhasArte.length);
+  const espacoMinimo = 8;
+  const larguraInformacoes = maiorLinhaTerminal(linhasInformacoes);
+  const larguraArte = maiorLinhaTerminal(linhasArte);
+  const larguraTerminal = pegarLarguraTerminalEmCaracteres();
+  const espacoDisponivel = larguraTerminal - larguraInformacoes;
+  const colunaArte = larguraTerminal > 0
+    ? Math.max(larguraInformacoes + espacoMinimo, larguraInformacoes + Math.floor((espacoDisponivel - larguraArte) / 2))
+    : 84;
+  const linhas = [];
+
+  for (let i = 0; i < totalLinhas; i++) {
+    const linhaInformacao = linhasInformacoes[i] || "";
+    const linhaArte = linhasArte[i] || "";
+
+    if (linhaArte) {
+      const espacos = Math.max(espacoMinimo, colunaArte - linhaInformacao.length);
+
+      linhas.push(linhaInformacao + " ".repeat(espacos) + linhaArte);
+    } else {
+      linhas.push(linhaInformacao);
+    }
+  }
+
+  return linhas.join("\n");
+}
+
+function maiorLinhaTerminal(linhas) {
+  return linhas.reduce(function (maior, linha) {
+    return Math.max(maior, linha.replace(/\s+$/, "").length);
+  }, 0);
+}
+
+function pegarLarguraTerminalEmCaracteres() {
+  if (!terminalSaida) {
+    return 0;
+  }
+
+  const estilo = window.getComputedStyle(terminalSaida);
+  const medida = document.createElement("span");
+
+  medida.textContent = "0000000000";
+  medida.style.position = "absolute";
+  medida.style.visibility = "hidden";
+  medida.style.whiteSpace = "pre";
+  medida.style.font = estilo.font;
+
+  document.body.appendChild(medida);
+
+  const larguraLetra = medida.getBoundingClientRect().width / 10;
+
+  medida.remove();
+
+  if (!larguraLetra) {
+    return 0;
+  }
+
+  return Math.floor(terminalSaida.clientWidth / larguraLetra);
+}
+
+function ajustarArteComTopicos(linhasInformacoes, linhasArte) {
+  const inicioTopicos = linhasInformacoes.findIndex(function (linha) {
+    return linha.trim() === "[base]";
+  });
+
+  const inicioArte = linhasArte.findIndex(function (linha) {
+    return linha.trim();
+  });
+
+  if (inicioTopicos < 0 || inicioArte < 0) {
+    return linhasArte;
+  }
+
+  let fimTopicos = inicioTopicos;
+
+  for (let i = inicioTopicos; i < linhasInformacoes.length; i++) {
+    const linha = linhasInformacoes[i].trim();
+
+    if (linha === "C:\\Users\\Lucas>") {
+      break;
+    }
+
+    if (linha) {
+      fimTopicos = i;
+    }
+  }
+
+  let fimArte = inicioArte;
+
+  for (let i = inicioArte; i < linhasArte.length; i++) {
+    if (linhasArte[i].trim()) {
+      fimArte = i;
+    }
+  }
+
+  const centroTopicos = (inicioTopicos + fimTopicos) / 2;
+  const centroArte = (inicioArte + fimArte) / 2;
+  const linhasParaDescer = Math.round(centroTopicos - centroArte) - 5;
+
+  if (linhasParaDescer > 0) {
+    return new Array(linhasParaDescer).fill("").concat(linhasArte);
+  }
+
+  if (linhasParaDescer < 0) {
+    return linhasArte.slice(Math.min(Math.abs(linhasParaDescer), inicioArte));
+  }
+
+  return linhasArte;
+}
+
+function iniciarTerminal() {
+  if (!terminalSaida || terminalDigitado) {
+    return;
+  }
+
+  const texto = pegarTextoTerminal();
+
+  if (!texto) {
+    return;
+  }
+
+  terminalDigitado = true;
+  terminalSaida.textContent = "";
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    terminalSaida.textContent = texto;
+    return;
+  }
+
+  let posicaoAtual = 0;
+
+  function escreverCaractere() {
+    if (posicaoAtual >= texto.length) {
+      return;
+    }
+
+    const caractere = texto[posicaoAtual];
+    terminalSaida.textContent += caractere;
+    posicaoAtual += 1;
+
+    const intervalo = caractere === "\n" ? 18 : caractere === " " ? 1 : 1;
+    esperaTerminal = setTimeout(escreverCaractere, intervalo);
+  }
+
+  escreverCaractere();
+}
+
 function moverOlhos(evento) {
   olhosAvatar.forEach(function (olho) {
     const pupila = olho.querySelector(".pupila-avatar");
@@ -681,6 +957,10 @@ const observador = new IntersectionObserver(function (entradas) {
     if (entrada.isIntersecting) {
       entrada.target.classList.add("secao-visivel");
       atualizarMenuAtivo(entrada.target.id);
+
+      if (entrada.target.id === "tecnologias") {
+        iniciarTerminal();
+      }
     }
   });
 }, {
