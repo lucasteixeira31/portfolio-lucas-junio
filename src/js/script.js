@@ -10,10 +10,234 @@ const imagemSilhueta = document.querySelector(".silhueta-topo-card img");
 const imagemHologramaEsquerda = document.querySelector(".gif-sobre-esquerda");
 const terminalSaida = document.querySelector(".terminal-saida");
 const terminalTexto = document.querySelector("#terminal-texto");
+const mapaProjetos = document.querySelector("#mapaProjetos");
+const trilhasMapa = document.querySelector(".mapa-trilhas");
+const personagemMapa = document.querySelector("#personagemMapa");
+const mapaTooltip = document.querySelector("#mapaTooltip");
+const miniGameProjetos = document.querySelector("#miniGameProjetos");
+const secaoProjetos = document.querySelector("#projetos");
+const cardGame = document.querySelector(".card-game");
+const gameViewport = document.querySelector(".game-viewport");
+const gameStage = document.querySelector("#gameStage");
+const iframeMiniGame = document.querySelector("#iframeMiniGame");
+const urlCursorGame = new URL("./game/assets/icons/cursor-game.png", window.location.href).href;
+const urlPointerGame = new URL("./game/assets/icons/pointer-game.png", window.location.href).href;
+const cursorGame = 'url("' + urlCursorGame + '") 19 5, auto';
+const cursorGamePortfolio = cursorGame;
+const cursorPointerGame = 'url("' + urlPointerGame + '") 20 4, pointer';
+const botaoCarregarGame = document.querySelector("#botaoCarregarGame");
+const miniGamePlaceholder = document.querySelector("#miniGamePlaceholder");
+const modalProjeto = document.querySelector("#modalProjeto");
+const modalNivel = document.querySelector("#modalNivel");
+const modalTipo = document.querySelector("#modalTipo");
+const modalTitulo = document.querySelector("#modalTitulo");
+const modalStatus = document.querySelector("#modalStatus");
+const modalDescricao = document.querySelector("#modalDescricao");
+const modalDesafio = document.querySelector("#modalDesafio");
+const modalTecnologias = document.querySelector("#modalTecnologias");
+const modalLinks = document.querySelector("#modalLinks");
+const fecharModalProjeto = document.querySelector(".fechar-modal");
 const areaPagina = document.documentElement;
 const simbolosCodigo = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "H", "K", "L", "M", "N", "R", "S", "T", "X", "Y", "Z", "a", "b", "d", "e", "g", "h", "n", "o", "r", "s", "t", "u", "x", "z", "ア", "カ", "タ", "メ", "+", "-", "=", "#", "$", "%", "&", "*", "/", "\\", "|", "_", ":", ";", "{", "}", "[", "]", "(", ")", "<", ">"];
 const gotasCodigo = [];
 const texturasCodigo = {};
+const projetosMapa = [
+  {
+    id: "portfolio",
+    nome: "Portfólio pessoal",
+    tipo: "fase",
+    status: "em-desenvolvimento",
+    nivel: "1-1",
+    descricao: "Página estática para apresentar minha trajetória, tecnologias e projetos.",
+    tecnologias: ["HTML", "CSS", "JavaScript"],
+    desafio: "Organizar identidade visual, navegação e responsividade em uma página estática.",
+    repo: "",
+    demo: "",
+    x: 12,
+    y: 62,
+    conexoes: ["landing-page", "pagina-simples"]
+  },
+  {
+    id: "landing-page",
+    nome: "Landing Page",
+    tipo: "fase",
+    status: "planejado",
+    nivel: "1-2",
+    descricao: "Página simples para praticar apresentação visual, chamada para ação e responsividade.",
+    tecnologias: ["HTML", "CSS", "JavaScript"],
+    desafio: "Criar uma página clara, bonita e direta sem depender de frameworks.",
+    repo: "",
+    demo: "",
+    x: 25,
+    y: 48,
+    conexoes: ["portfolio", "pagina-simples"]
+  },
+  {
+    id: "pagina-simples",
+    nome: "Página simples",
+    tipo: "fase",
+    status: "planejado",
+    nivel: "1-3",
+    descricao: "Projeto menor para treinar estrutura HTML, estilos e comportamento básico com JavaScript.",
+    tecnologias: ["HTML", "CSS", "JavaScript"],
+    desafio: "Praticar base visual e organização de conteúdo sem exagerar na complexidade.",
+    repo: "",
+    demo: "",
+    x: 30,
+    y: 64,
+    conexoes: ["portfolio", "landing-page", "cadastro", "cardapio"]
+  },
+  {
+    id: "cadastro",
+    nome: "Sistema de cadastro",
+    tipo: "fase",
+    status: "planejado",
+    nivel: "1-4",
+    descricao: "Projeto para praticar cadastro, listagem, edição e remoção de registros.",
+    tecnologias: ["HTML", "CSS", "JavaScript", "Node.js"],
+    desafio: "Criar um fluxo simples de cadastro com dados organizados e interface fácil de usar.",
+    repo: "",
+    demo: "",
+    x: 38,
+    y: 48,
+    conexoes: ["pagina-simples", "api-rest", "site-institucional"]
+  },
+  {
+    id: "api-rest",
+    nome: "API REST de tarefas",
+    tipo: "fase",
+    status: "planejado",
+    nivel: "1-5",
+    descricao: "Projeto para praticar rotas, organização de dados e operações de tarefas.",
+    tecnologias: ["Node.js", "Express", "PostgreSQL"],
+    desafio: "Criar rotas claras para cadastrar, listar, editar e remover tarefas.",
+    repo: "",
+    demo: "",
+    x: 51,
+    y: 36,
+    conexoes: ["cadastro", "saas", "dashboard"]
+  },
+  {
+    id: "cardapio",
+    nome: "Cardápio digital",
+    tipo: "fase",
+    status: "planejado",
+    nivel: "1-6",
+    descricao: "Página planejada para organizar produtos, categorias e informações de contato.",
+    tecnologias: ["HTML", "CSS", "JavaScript"],
+    desafio: "Montar uma interface simples para consulta rápida em celular.",
+    repo: "",
+    demo: "",
+    x: 26,
+    y: 78,
+    conexoes: ["pagina-simples", "site-institucional"]
+  },
+  {
+    id: "site-institucional",
+    nome: "Site institucional",
+    tipo: "fase",
+    status: "planejado",
+    nivel: "1-7",
+    descricao: "Site planejado para apresentar uma marca, serviços e formas de contato.",
+    tecnologias: ["HTML", "CSS", "JavaScript"],
+    desafio: "Organizar páginas e seções com leitura confortável e visual profissional.",
+    repo: "",
+    demo: "",
+    x: 44,
+    y: 72,
+    conexoes: ["cadastro", "cardapio", "dashboard"]
+  },
+  {
+    id: "dashboard",
+    nome: "Dashboard básico",
+    tipo: "fase",
+    status: "planejado",
+    nivel: "1-8",
+    descricao: "Tela planejada para praticar cards de resumo, filtros e dados organizados.",
+    tecnologias: ["HTML", "CSS", "JavaScript", "SQL"],
+    desafio: "Transformar informações em uma tela fácil de acompanhar.",
+    repo: "",
+    demo: "",
+    x: 60,
+    y: 68,
+    conexoes: ["site-institucional", "api-rest", "sistema-admin", "plataforma-financeira"]
+  },
+  {
+    id: "saas",
+    nome: "SaaS",
+    tipo: "boss",
+    status: "planejado",
+    nivel: "Boss 1",
+    descricao: "Sistema completo planejado com usuários, assinaturas e painel administrativo.",
+    tecnologias: ["Node.js", "PostgreSQL", "Autenticação", "Pagamentos"],
+    desafio: "Unir login, banco de dados, planos e gestão em uma aplicação maior.",
+    repo: "",
+    demo: "",
+    x: 64,
+    y: 24,
+    conexoes: ["api-rest", "sistema-admin", "ecommerce"]
+  },
+  {
+    id: "sistema-admin",
+    nome: "Sistema administrativo",
+    tipo: "boss",
+    status: "planejado",
+    nivel: "Boss 2",
+    descricao: "Sistema para organizar informações, telas de consulta, filtros e controle de dados.",
+    tecnologias: ["JavaScript", "Node.js", "Express", "PostgreSQL"],
+    desafio: "Criar telas úteis para consultar, filtrar e manter dados com organização.",
+    repo: "",
+    demo: "",
+    x: 78,
+    y: 48,
+    conexoes: ["saas", "dashboard", "ecommerce", "chatbot"]
+  },
+  {
+    id: "ecommerce",
+    nome: "E-commerce",
+    tipo: "boss",
+    status: "planejado",
+    nivel: "Boss 3",
+    descricao: "Projeto futuro para praticar catálogo, carrinho e fluxo de compra.",
+    tecnologias: ["Node.js", "Express", "PostgreSQL", "APIs REST"],
+    desafio: "Organizar produtos, pedidos e pagamentos em um fluxo confiável.",
+    repo: "",
+    demo: "",
+    x: 88,
+    y: 28,
+    conexoes: ["saas", "sistema-admin"]
+  },
+  {
+    id: "chatbot",
+    nome: "Chatbot IA",
+    tipo: "boss",
+    status: "planejado",
+    nivel: "Boss 4",
+    descricao: "Projeto futuro para explorar conversa automatizada e integração com sistemas.",
+    tecnologias: ["JavaScript", "Node.js", "APIs"],
+    desafio: "Criar respostas úteis e conectar o bot a dados reais de forma simples.",
+    repo: "",
+    demo: "",
+    x: 88,
+    y: 68,
+    conexoes: ["sistema-admin", "plataforma-financeira"]
+  },
+  {
+    id: "plataforma-financeira",
+    nome: "Plataforma financeira",
+    tipo: "boss",
+    status: "planejado",
+    nivel: "Boss 5",
+    descricao: "Projeto futuro para estudar cobranças, relatórios e organização financeira.",
+    tecnologias: ["Node.js", "Express", "PostgreSQL", "APIs"],
+    desafio: "Lidar com dados financeiros com clareza, filtros e cuidado nas regras.",
+    repo: "",
+    demo: "",
+    x: 72,
+    y: 82,
+    conexoes: ["dashboard", "chatbot"]
+  }
+];
 let renderizadorCodigo = null;
 let cenaCodigo = null;
 let cameraCodigo = null;
@@ -37,6 +261,11 @@ let quadroHologramaEsquerda = 1;
 let animacaoHologramaEsquerda = null;
 let terminalDigitado = false;
 let esperaTerminal = null;
+let idSecaoAtual = "";
+let idProjetoAtual = "portfolio";
+let personagemMovendo = false;
+const larguraBaseGame = 1920;
+const alturaBaseGame = 1080;
 
 function menuEstaAberto() {
   return pagina.classList.contains("menu-aberto");
@@ -115,6 +344,7 @@ function processarMouse() {
   moverLuzHologramaEsquerda(evento);
   moverOlhos(evento);
   moverAvatar(evento);
+
   mousePendente = false;
 }
 
@@ -863,6 +1093,468 @@ function iniciarTerminal() {
   escreverCaractere();
 }
 
+function pegarProjetoMapa(idProjeto) {
+  return projetosMapa.find(function (projeto) {
+    return projeto.id === idProjeto;
+  });
+}
+
+function textoStatusProjeto(status) {
+  const textos = {
+    planejado: "Planejado",
+    "em-desenvolvimento": "Em desenvolvimento",
+    concluido: "Concluído"
+  };
+
+  return textos[status] || status;
+}
+
+function textoTipoProjeto(tipo) {
+  return tipo === "boss" ? "Boss / castelo" : "Fase simples";
+}
+
+function criarTrilhasMapa() {
+  if (!trilhasMapa) {
+    return;
+  }
+
+  const trilhasCriadas = [];
+  trilhasMapa.innerHTML = "";
+
+  projetosMapa.forEach(function (projeto) {
+    projeto.conexoes.forEach(function (idConexao) {
+      const destino = pegarProjetoMapa(idConexao);
+      const chave = [projeto.id, idConexao].sort().join("-");
+
+      if (!destino || trilhasCriadas.includes(chave)) {
+        return;
+      }
+
+      const caminho = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      const meioX = (projeto.x + destino.x) / 2;
+      const curva = Math.abs(projeto.y - destino.y) > 18 ? 4 : -4;
+
+      caminho.setAttribute("d", "M " + projeto.x + " " + projeto.y + " C " + meioX + " " + (projeto.y + curva) + ", " + meioX + " " + (destino.y - curva) + ", " + destino.x + " " + destino.y);
+      caminho.classList.add("trilha-conexao");
+      trilhasMapa.appendChild(caminho);
+      trilhasCriadas.push(chave);
+    });
+  });
+}
+
+function criarMapaProjetos() {
+  if (!mapaProjetos) {
+    return;
+  }
+
+  criarTrilhasMapa();
+
+  projetosMapa.forEach(function (projeto) {
+    const botaoProjeto = document.createElement("button");
+    const labelProjeto = document.createElement("span");
+    const statusProjeto = document.createElement("span");
+
+    botaoProjeto.type = "button";
+    botaoProjeto.className = "ponto-projeto " + projeto.tipo + " status-" + projeto.status;
+    botaoProjeto.dataset.projeto = projeto.id;
+    botaoProjeto.style.setProperty("--x", projeto.x + "%");
+    botaoProjeto.style.setProperty("--y", projeto.y + "%");
+    botaoProjeto.setAttribute("aria-label", "Abrir detalhes do projeto " + projeto.nome);
+
+    if (projeto.id === "saas") {
+      botaoProjeto.classList.add("boss-principal");
+    }
+
+    if (projeto.tipo === "boss") {
+      const castelo = document.createElement("span");
+      castelo.className = "castelo";
+      botaoProjeto.appendChild(castelo);
+    } else {
+      const nivel = document.createElement("span");
+      const brilho = document.createElement("span");
+
+      nivel.className = "nivel";
+      nivel.textContent = projeto.nivel;
+      brilho.className = "ponto-brilho";
+      botaoProjeto.appendChild(nivel);
+      botaoProjeto.appendChild(brilho);
+    }
+
+    labelProjeto.className = "label";
+    labelProjeto.textContent = projeto.nome;
+    statusProjeto.className = "mapa-status-ponto";
+    statusProjeto.textContent = textoStatusProjeto(projeto.status);
+
+    labelProjeto.appendChild(statusProjeto);
+    botaoProjeto.appendChild(labelProjeto);
+    botaoProjeto.addEventListener("click", function (evento) {
+      evento.stopPropagation();
+      moverParaProjeto(projeto.id);
+      abrirProjetoMapa(projeto.id);
+    });
+
+    mapaProjetos.appendChild(botaoProjeto);
+  });
+
+  atualizarPersonagem(pegarProjetoMapa(idProjetoAtual));
+  destacarProjetoAtual();
+}
+
+function atualizarPersonagem(projeto) {
+  if (!personagemMapa || !projeto) {
+    return;
+  }
+
+  personagemMapa.style.setProperty("--personagem-x", projeto.x + "%");
+  personagemMapa.style.setProperty("--personagem-y", projeto.y + "%");
+  mostrarTooltipProjeto(projeto);
+}
+
+function destacarProjetoAtual() {
+  const projetoAtual = pegarProjetoMapa(idProjetoAtual);
+
+  document.querySelectorAll(".ponto-projeto").forEach(function (botao) {
+    const projeto = pegarProjetoMapa(botao.dataset.projeto);
+    const disponivel = projetoAtual && projetoAtual.conexoes.includes(botao.dataset.projeto);
+
+    botao.classList.toggle("ponto-atual", botao.dataset.projeto === idProjetoAtual);
+    botao.classList.toggle("ponto-disponivel", Boolean(disponivel));
+  });
+}
+
+function mostrarTooltipProjeto(projeto) {
+  if (!mapaTooltip || !projeto) {
+    return;
+  }
+
+  mapaTooltip.hidden = false;
+  mapaTooltip.style.setProperty("--tooltip-x", projeto.x + "%");
+  mapaTooltip.style.setProperty("--tooltip-y", projeto.y + "%");
+  mapaTooltip.innerHTML = "<strong></strong><span></span>";
+  mapaTooltip.querySelector("strong").textContent = projeto.nome;
+  mapaTooltip.querySelector("span").textContent = "Enter para abrir";
+}
+
+function pegarProjetoNaDirecao(direcao) {
+  const projetoAtual = pegarProjetoMapa(idProjetoAtual);
+
+  if (!projetoAtual) {
+    return null;
+  }
+
+  const conectados = projetoAtual.conexoes
+    .map(pegarProjetoMapa)
+    .filter(Boolean);
+
+  const candidatos = conectados.filter(function (projeto) {
+    if (direcao === "direita") {
+      return projeto.x > projetoAtual.x + 1;
+    }
+
+    if (direcao === "esquerda") {
+      return projeto.x < projetoAtual.x - 1;
+    }
+
+    if (direcao === "cima") {
+      return projeto.y < projetoAtual.y - 1;
+    }
+
+    return projeto.y > projetoAtual.y + 1;
+  });
+
+  if (!candidatos.length) {
+    return null;
+  }
+
+  candidatos.sort(function (a, b) {
+    const distanciaA = Math.abs(a.x - projetoAtual.x) + Math.abs(a.y - projetoAtual.y);
+    const distanciaB = Math.abs(b.x - projetoAtual.x) + Math.abs(b.y - projetoAtual.y);
+
+    return distanciaA - distanciaB;
+  });
+
+  return candidatos[0];
+}
+
+function moverPersonagem(direcao) {
+  const destino = pegarProjetoNaDirecao(direcao);
+  const origem = pegarProjetoMapa(idProjetoAtual);
+
+  if (!destino || personagemMovendo) {
+    return;
+  }
+
+  personagemMovendo = true;
+  idProjetoAtual = destino.id;
+
+  if (personagemMapa) {
+    personagemMapa.classList.add("andando");
+
+    if (origem && destino.x < origem.x) {
+      personagemMapa.style.setProperty("--lado-personagem", "-1");
+    } else if (origem && destino.x > origem.x) {
+      personagemMapa.style.setProperty("--lado-personagem", "1");
+    }
+  }
+
+  atualizarPersonagem(destino);
+  destacarProjetoAtual();
+
+  setTimeout(function () {
+    personagemMovendo = false;
+
+    if (personagemMapa) {
+      personagemMapa.classList.remove("andando");
+    }
+  }, 420);
+}
+
+function moverParaProjeto(idProjeto) {
+  const projeto = pegarProjetoMapa(idProjeto);
+  const origem = pegarProjetoMapa(idProjetoAtual);
+
+  if (!projeto) {
+    return;
+  }
+
+  idProjetoAtual = projeto.id;
+
+  if (personagemMapa && origem && projeto.x < origem.x) {
+    personagemMapa.style.setProperty("--lado-personagem", "-1");
+  } else if (personagemMapa && origem && projeto.x > origem.x) {
+    personagemMapa.style.setProperty("--lado-personagem", "1");
+  }
+
+  atualizarPersonagem(projeto);
+  destacarProjetoAtual();
+}
+
+function controlarMapaPorTeclado(evento) {
+  const tecla = evento.key.toLowerCase();
+  const direcoes = {
+    arrowright: "direita",
+    d: "direita",
+    arrowleft: "esquerda",
+    a: "esquerda",
+    arrowup: "cima",
+    w: "cima",
+    arrowdown: "baixo",
+    s: "baixo"
+  };
+
+  if (direcoes[tecla]) {
+    evento.preventDefault();
+    moverPersonagem(direcoes[tecla]);
+    return;
+  }
+
+  if (tecla === "enter" || tecla === " ") {
+    evento.preventDefault();
+    abrirProjetoMapa(idProjetoAtual);
+  }
+}
+
+function criarLinksProjeto(projeto) {
+  if (!modalLinks) {
+    return;
+  }
+
+  modalLinks.innerHTML = "";
+
+  if (projeto.repo) {
+    const linkRepo = document.createElement("a");
+
+    linkRepo.href = projeto.repo;
+    linkRepo.target = "_blank";
+    linkRepo.rel = "noopener noreferrer";
+    linkRepo.textContent = "Repositório";
+    modalLinks.appendChild(linkRepo);
+  } else {
+    const repoBreve = document.createElement("span");
+
+    repoBreve.textContent = "Repositório em breve";
+    modalLinks.appendChild(repoBreve);
+  }
+
+  if (projeto.demo) {
+    const linkDemo = document.createElement("a");
+
+    linkDemo.href = projeto.demo;
+    linkDemo.target = "_blank";
+    linkDemo.rel = "noopener noreferrer";
+    linkDemo.textContent = "Demo";
+    modalLinks.appendChild(linkDemo);
+  }
+}
+
+function abrirProjetoMapa(idProjeto) {
+  const projeto = pegarProjetoMapa(idProjeto);
+
+  if (!projeto || !modalProjeto || !modalNivel || !modalTipo || !modalTitulo || !modalStatus || !modalDescricao || !modalDesafio || !modalTecnologias) {
+    return;
+  }
+
+  moverParaProjeto(projeto.id);
+  modalNivel.textContent = projeto.nivel;
+  modalTipo.textContent = textoTipoProjeto(projeto.tipo);
+  modalTitulo.textContent = projeto.nome;
+  modalStatus.textContent = "Status: " + textoStatusProjeto(projeto.status);
+  modalDescricao.textContent = projeto.descricao;
+  modalDesafio.textContent = "Desafio: " + projeto.desafio;
+  modalTecnologias.innerHTML = "";
+
+  projeto.tecnologias.forEach(function (tecnologia) {
+    const tag = document.createElement("span");
+
+    tag.className = "tag-tech";
+    tag.textContent = tecnologia;
+    modalTecnologias.appendChild(tag);
+  });
+
+  criarLinksProjeto(projeto);
+  modalProjeto.hidden = false;
+
+  if (fecharModalProjeto) {
+    fecharModalProjeto.focus();
+  }
+}
+
+function fecharProjetoMapa() {
+  if (modalProjeto) {
+    modalProjeto.hidden = true;
+  }
+
+  if (mapaProjetos) {
+    mapaProjetos.focus({ preventScroll: true });
+  }
+}
+
+function ajustarEscalaGame() {
+  if (!gameViewport) {
+    return;
+  }
+
+  const larguraViewport = gameViewport.clientWidth;
+  const alturaViewport = gameViewport.clientHeight;
+
+  if (!larguraViewport || !alturaViewport) {
+    return;
+  }
+
+  const escalaX = larguraViewport / larguraBaseGame;
+  const escalaY = alturaViewport / alturaBaseGame;
+  const escala = Math.min(escalaX, escalaY);
+  const aumentoTexto = Math.min(1.22, Math.max(1, 1 + (1 - escala) * 0.22));
+
+  if (iframeMiniGame && iframeMiniGame.contentDocument) {
+    iframeMiniGame.contentDocument.documentElement.style.setProperty("--aumento-texto-game", aumentoTexto.toFixed(3));
+
+    if (iframeMiniGame.contentDocument.body) {
+      iframeMiniGame.contentDocument.body.style.setProperty("--aumento-texto-game", aumentoTexto.toFixed(3));
+    }
+  }
+}
+
+function esconderCursorNativoNoCard() {
+  const elementos = [cardGame, gameViewport, gameStage, iframeMiniGame];
+
+  elementos.forEach(function (elemento) {
+    if (elemento) {
+      elemento.style.setProperty("cursor", "none", "important");
+    }
+  });
+
+  if (secaoProjetos) {
+    secaoProjetos.style.removeProperty("cursor");
+  }
+}
+
+function iniciarCursorFlutuanteNoIframe() {
+  if (!iframeMiniGame || !iframeMiniGame.contentWindow) {
+    return;
+  }
+
+  if (typeof iframeMiniGame.contentWindow.iniciarCursorFlutuante === "function") {
+    iframeMiniGame.contentWindow.iniciarCursorFlutuante({
+      urlGame: urlCursorGame,
+      urlPointer: urlPointerGame
+    });
+  }
+}
+
+function aplicarCursorGameNoIframe() {
+  iniciarCursorFlutuanteNoIframe();
+}
+
+function aplicarCursorGameNoCard() {
+  esconderCursorNativoNoCard();
+}
+
+function manterCursorGameNoCard() {
+  esconderCursorNativoNoCard();
+  iniciarCursorFlutuanteNoIframe();
+}
+
+function carregarMiniGame() {
+  if (!iframeMiniGame || iframeMiniGame.getAttribute("src")) {
+    return;
+  }
+
+  aplicarCursorGameNoCard();
+  ajustarEscalaGame();
+
+  const caminhoGame = iframeMiniGame.dataset.src;
+
+  if (!caminhoGame) {
+    return;
+  }
+
+  iframeMiniGame.src = caminhoGame;
+
+  if (miniGameProjetos) {
+    miniGameProjetos.classList.add("game-carregado");
+  }
+
+  if (botaoCarregarGame) {
+    botaoCarregarGame.disabled = true;
+    botaoCarregarGame.textContent = "Carregado";
+  }
+
+  if (miniGamePlaceholder) {
+    miniGamePlaceholder.hidden = true;
+  }
+}
+
+function prepararCarregamentoGame() {
+  if (!iframeMiniGame) {
+    return;
+  }
+
+  ajustarEscalaGame();
+
+  if (window.ResizeObserver && gameViewport) {
+    const observadorTamanhoGame = new ResizeObserver(ajustarEscalaGame);
+
+    observadorTamanhoGame.observe(gameViewport);
+  }
+
+  if (!secaoProjetos || !("IntersectionObserver" in window)) {
+    carregarMiniGame();
+    return;
+  }
+
+  const observadorGame = new IntersectionObserver(function (entradas) {
+    if (entradas[0].isIntersecting) {
+      carregarMiniGame();
+      observadorGame.disconnect();
+    }
+  }, {
+    threshold: 0.1
+  });
+
+  observadorGame.observe(secaoProjetos);
+}
+
 function moverOlhos(evento) {
   olhosAvatar.forEach(function (olho) {
     const pupila = olho.querySelector(".pupila-avatar");
@@ -930,8 +1622,60 @@ linksMenu.forEach(function (link) {
   });
 });
 
+if (fecharModalProjeto) {
+  fecharModalProjeto.addEventListener("click", fecharProjetoMapa);
+}
+
+if (modalProjeto) {
+  modalProjeto.addEventListener("click", function (evento) {
+    if (evento.target === modalProjeto) {
+      fecharProjetoMapa();
+    }
+  });
+}
+
+if (mapaProjetos) {
+  mapaProjetos.addEventListener("click", function (evento) {
+    if (!evento.target.closest(".ponto-projeto")) {
+      mapaProjetos.focus({ preventScroll: true });
+    }
+  });
+}
+
+if (botaoCarregarGame) {
+  botaoCarregarGame.addEventListener("click", carregarMiniGame);
+}
+
+if (iframeMiniGame) {
+  iframeMiniGame.addEventListener("load", function () {
+    ajustarEscalaGame();
+    manterCursorGameNoCard();
+  });
+}
+
+esconderCursorNativoNoCard();
+prepararCarregamentoGame();
+
+document.addEventListener("keydown", function (evento) {
+  if (evento.key === "Escape" && modalProjeto && !modalProjeto.hidden) {
+    fecharProjetoMapa();
+    return;
+  }
+
+  if (modalProjeto && !modalProjeto.hidden) {
+    return;
+  }
+
+  const focoNoMapa = mapaProjetos && (document.activeElement === mapaProjetos || mapaProjetos.contains(document.activeElement));
+
+  if (idSecaoAtual === "projetos" || focoNoMapa) {
+    controlarMapaPorTeclado(evento);
+  }
+});
+
 window.addEventListener("resize", prepararMenu);
 window.addEventListener("resize", prepararFundoCodigo);
+window.addEventListener("resize", ajustarEscalaGame);
 document.addEventListener("visibilitychange", function () {
   if (document.hidden) {
     pararCodigo();
@@ -956,6 +1700,7 @@ const observador = new IntersectionObserver(function (entradas) {
   entradas.forEach(function (entrada) {
     if (entrada.isIntersecting) {
       entrada.target.classList.add("secao-visivel");
+      idSecaoAtual = entrada.target.id;
       atualizarMenuAtivo(entrada.target.id);
 
       if (entrada.target.id === "tecnologias") {
@@ -971,6 +1716,7 @@ secoes.forEach(function (secao) {
   observador.observe(secao);
 });
 
+criarMapaProjetos();
 prepararMenu();
 prepararSilhueta();
 prepararHologramaEsquerda();

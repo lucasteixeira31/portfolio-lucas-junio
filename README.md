@@ -24,6 +24,8 @@ O objetivo deste projeto é construir meu primeiro portfólio pessoal no GitHub,
 - Animações simples de entrada
 - Área de tecnologias
 - Área de projetos
+- Espaço preparado para mini-game de projetos
+- Mini-game exibido em área proporcional 16:9
 - Área de formação
 - Área de contato
 
