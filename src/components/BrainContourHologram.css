@@ -1,0 +1,10 @@
+.brain-contour-hologram {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.brain-contour-hologram canvas {
+  display: block;
+  background: transparent;
+}

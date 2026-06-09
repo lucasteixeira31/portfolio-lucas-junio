@@ -1,0 +1,214 @@
+const GEMINI_API_KEY = "AIzaSyCCF71nbHsa6tbmDwMeF9gLRpZ2tEurjjE";
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu("🚀 SISTEMA IA")
+    .addItem("Processar com Gemini", "sistemaMaximoIA")
+    .addToUi();
+}
+
+function sistemaMaximoIA() {
+  const ui = SpreadsheetApp.getUi();
+  const cache = PropertiesService.getScriptProperties();
+  
+  try {
+    const pastasRaiz = DriveApp.getFoldersByName("PAPELARIA LEE");
+    if (!pastasRaiz.hasNext()) {
+      ui.alert("❌ ERRO: Não encontrei a pasta 'PAPELARIA LEE' no seu Drive."); return;
+    }
+    const pastaRaiz = pastasRaiz.next();
+
+    const pastasEntrada = pastaRaiz.getFoldersByName("ENTRADA_IA");
+    if (!pastasEntrada.hasNext()) {
+      ui.alert("❌ ERRO: Não encontrei a pasta 'ENTRADA_IA' dentro da Papelaria Lee."); return;
+    }
+    const pastaEntrada = pastasEntrada.next();
+
+    const arquivos = pastaEntrada.getFiles();
+    let processouAlgo = false;
+
+    while (arquivos.hasNext()) {
+      processouAlgo = true;
+      let file = arquivos.next();
+      
+      let dados = pedirAjudaAoGemini(file);
+      if (!dados) continue;
+
+      let dataFinal = dados.data ? dados.data.trim() : "";
+      const ultimaDataSalva = cache.getProperty('ULTIMA_DATA_PROCESSADA');
+
+      if (dataFinal === "" || dataFinal === "null" || dataFinal.toLowerCase() === "não identificado") {
+        if (ultimaDataSalva) {
+          dataFinal = ultimaDataSalva;
+        } else {
+          dataFinal = Utilities.formatDate(new Date(), "GMT-3", "dd/MM/yyyy");
+        }
+      } else {
+        cache.setProperty('ULTIMA_DATA_PROCESSADA', dataFinal);
+      }
+
+      let valorNumerico = 0;
+      if (dados.valor !== undefined && dados.valor !== null) {
+        let textoValor = dados.valor.toString().replace(/[R$\s]/g, "");
+        if (textoValor.includes(",") && textoValor.includes(".")) {
+          textoValor = textoValor.replace(/\./g, "").replace(",", ".");
+        } else if (textoValor.includes(",")) {
+          textoValor = textoValor.replace(",", ".");
+        }
+        valorNumerico = parseFloat(textoValor) || 0; 
+      }
+
+      let vencimentoLimpo = dados.vencimento ? dados.vencimento.trim() : "";
+      let numeroLimpo = dados.numero ? dados.numero.trim() : "";
+      let fornecedorLimpo = dados.fornecedor ? dados.fornecedor.trim() : "NÃO IDENTIFICADO";
+
+      ui.alert(`🤖 IA Respondeu!\n\nTipo: ${dados.tipo}\nData Utilizada: ${dataFinal}\nReferência: ${fornecedorLimpo}\nValor: R$ ${valorNumerico}\n\nSalvando...`);
+
+      let dataISO = dataFinal.split("/").reverse().join("-");
+      let extensao = file.getName().includes(".") ? file.getName().split(".").pop() : "pdf";
+      let novoNome = `${dataISO} - ${dados.tipo} - ${fornecedorLimpo} - R$ ${valorNumerico}.${extensao}`;
+      novoNome = novoNome.replace(/[\\\/:*?"<>|]/g, "");
+      file.setName(novoNome);
+
+      let nomeAbaDestino = "";
+      if (dados.tipo === "DANFE") nomeAbaDestino = "DANFE";
+      else if (dados.tipo === "ENTRADA") nomeAbaDestino = "Entradas";
+      else if (dados.tipo === "ATESTADO") nomeAbaDestino = "Atestados";
+      else nomeAbaDestino = "Gastos";
+
+      inserirLinhaInteligente(nomeAbaDestino, dados, valorNumerico, dataFinal, vencimentoLimpo, numeroLimpo, file.getUrl());
+
+      moverParaPastaFinal(file, dataFinal, dados.tipo, pastaRaiz);
+    }
+    
+    if (!processouAlgo) {
+      ui.alert("⚠️ A pasta ENTRADA_IA está VAZIA.");
+    } else {
+      ui.alert("✅ Sucesso! O Dashboard já deve estar atualizado.");
+    }
+
+  } catch (erro) {
+    ui.alert("❌ Erro no sistema:\n\n" + erro.message);
+  }
+}
+
+function inserirLinhaInteligente(nomeAba, dados, valorNumerico, dataLimpa, vencimentoLimpo, numeroLimpo, fileUrl) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let aba = ss.getSheetByName(nomeAba) || ss.getSheetByName(nomeAba.toUpperCase());
+  if (!aba) return;
+
+  let ultimaColuna = aba.getLastColumn();
+  if (ultimaColuna === 0) ultimaColuna = 9; 
+
+  let cabecalhos = aba.getRange(1, 1, 1, ultimaColuna).getValues()[0];
+  let novaLinha = new Array(ultimaColuna).fill(""); 
+
+  for (let i = 0; i < cabecalhos.length; i++) {
+    let titulo = cabecalhos[i].toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim();
+
+    if (titulo === "") continue;
+
+    if (titulo.includes("numero") || titulo.includes("nota") || titulo === "nf" || titulo.includes("documento") || titulo === "n" || titulo === "nº") {
+      novaLinha[i] = numeroLimpo;
+    } else if (titulo.includes("data") && !titulo.includes("vencimento")) {
+      novaLinha[i] = dataLimpa;
+    } else if (titulo.includes("fornecedor") || titulo.includes("cliente") || titulo.includes("empresa") || titulo.includes("nome") || titulo.includes("origem") || titulo.includes("funcionario") || titulo.includes("paciente")) {
+      novaLinha[i] = dados.fornecedor || "NÃO IDENTIFICADO";
+    } else if (titulo.includes("valor") || titulo.includes("total") || titulo.includes("quantia") || titulo.includes("saida") || titulo.includes("entrada")) {
+      novaLinha[i] = valorNumerico;
+    } else if (titulo.includes("categoria") || titulo.includes("tipo")) {
+      novaLinha[i] = dados.categoria;
+    } else if (titulo.includes("descri") || titulo.includes("detalhe") || titulo.includes("resumo") || titulo.includes("cid") || titulo.includes("motivo")) {
+      novaLinha[i] = dados.descricao;
+    } else if (titulo.includes("status") || titulo.includes("situacao") || titulo.includes("pago")) {
+      novaLinha[i] = dados.status;
+    } else if (titulo.includes("vencimento") || titulo.includes("prazo") || titulo.includes("retorno")) {
+      novaLinha[i] = vencimentoLimpo;
+    } else if (titulo.includes("link") || titulo.includes("anexo") || titulo.includes("comprovante") || titulo.includes("arquivo") || titulo.includes("documento") || titulo.includes("danfe")) {
+      novaLinha[i] = fileUrl;
+    }
+  }
+
+  aba.appendRow(novaLinha);
+}
+
+function pedirAjudaAoGemini(file) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  
+  const blob = file.getBlob();
+  const base64Data = Utilities.base64Encode(blob.getBytes());
+  const mimeType = blob.getContentType();
+
+  const prompt = `Analise este documento com EXTREMA PRECISÃO.
+  Responda APENAS um JSON puro (sem markdown) no formato exato abaixo:
+  {
+    "numero": "NÚMERO da nota, recibo ou CRM (ou deixe vazio)",
+    "data": "DD/MM/YYYY",
+    "fornecedor": "NOME DA EMPRESA, CLIENTE OU PACIENTE (obrigatório, se não achar escreva NÃO IDENTIFICADO)",
+    "valor": 0.00,
+    "tipo": "DANFE, PAGAMENTO, ENTRADA ou ATESTADO",
+    "categoria": "ESTOQUE, ALUGUEL, VENDA BALCÃO, SAÚDE, etc",
+    "descricao": "Resumo curto",
+    "status": "PAGO, RECEBIDO ou VALIDADO",
+    "vencimento": "DD/MM/YYYY (ou vazio)"
+  }
+  Regras cruciais:
+  1. O campo 'valor' DEVE ser retornado como um NÚMERO FLOAT (sem aspas), usando PONTO como separador decimal. Exemplo: 1540.50. Nunca use vírgula. Se não houver valor, envie 0.
+  2. O campo 'fornecedor' nunca pode estar vazio. Extraia o nome ou escreva NÃO IDENTIFICADO.`;
+
+  const payload = {
+    "contents": [{ "parts": [{ "text": prompt }, { "inline_data": { "mime_type": mimeType, "data": base64Data } }] }]
+  };
+
+  const options = {
+    "method": "post",
+    "contentType": "application/json",
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
+
+  let tentativas = 0;
+  const maxTentativas = 3;
+
+  while (tentativas < maxTentativas) {
+    const response = UrlFetchApp.fetch(url, options);
+    const responseCode = response.getResponseCode();
+    const responseText = response.getContentText();
+    
+    if (responseCode === 200) {
+      const resJson = JSON.parse(responseText);
+      if (resJson.candidates && resJson.candidates[0].content.parts[0].text) {
+        let resultText = resJson.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
+        return JSON.parse(resultText);
+      }
+      return null;
+    } 
+    else if (responseCode === 503 || responseCode === 429) {
+      tentativas++;
+      Utilities.sleep(5000);
+    } 
+    else {
+      throw new Error("Erro na API (" + responseCode + "): " + responseText);
+    }
+  }
+}
+
+function moverParaPastaFinal(file, data, tipo, pastaRaiz) {
+  if (!data || data === "" || data.toLowerCase() === "não identificado") data = "01/01/2000"; 
+  const partes = data.split("/");
+  if (partes.length < 3) return;
+  const nomesMes = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
+  const nomeMes = nomesMes[parseInt(partes[1]) - 1];
+  const ano = partes[2];
+  
+  const pProcessados = getFolder(pastaRaiz, "PROCESSADOS");
+  const pTipo = getFolder(pProcessados, tipo); 
+  const pAno = getFolder(pTipo, ano);
+  const pMes = getFolder(pAno, nomeMes);
+  file.moveTo(pMes);
+}
+
+function getFolder(pai, nome) {
+  const pastas = pai.getFoldersByName(nome);
+  return pastas.hasNext() ? pastas.next() : pai.createFolder(nome);
+}

@@ -610,6 +610,44 @@ video {
   opacity: 0.82;
 }
 
+.cerebro-holograma {
+  position: absolute;
+  --luz-cerebro-x: 50%;
+  --luz-cerebro-y: 50%;
+  right: min(6vw, 84px);
+  top: 52%;
+  z-index: 0;
+  width: min(27vw, 330px);
+  height: min(48vh, 390px);
+  pointer-events: none;
+  opacity: 0.84;
+  mix-blend-mode: screen;
+  filter:
+    var(--filtro-holograma)
+    drop-shadow(0 0 10px var(--holograma-glow-suave))
+    drop-shadow(0 0 22px rgba(110, 180, 255, 0.18));
+  transform: translateY(-50%);
+  transition: opacity 0.18s ease;
+  mask-image: radial-gradient(circle at var(--luz-cerebro-x) var(--luz-cerebro-y), #000 0 134px, rgba(0, 0, 0, 0.72) 214px, transparent 322px);
+  -webkit-mask-image: radial-gradient(circle at var(--luz-cerebro-x) var(--luz-cerebro-y), #000 0 134px, rgba(0, 0, 0, 0.72) 214px, transparent 322px);
+}
+
+.cerebro-holograma.cerebro-visivel {
+  opacity: 0.84;
+}
+
+.cerebro-holograma canvas {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cerebro-holograma::after {
+  display: flex;
+}
+
 .gif-sobre {
   position: absolute;
   right: min(3vw, 36px);
@@ -2075,18 +2113,278 @@ video {
   }
 }
 
-#formacao article,
-#contato ul {
+#formacao article {
   padding: 18px;
   background: rgba(27, 18, 46, 0.58);
   border: 1px solid rgba(200, 162, 255, 0.16);
   border-radius: 18px;
 }
 
-#contato ul {
+.formacao-com-cerebro {
+  position: relative;
+  margin-bottom: var(--espaco-slide);
+  overflow: visible;
+  isolation: isolate;
+}
+
+.formacao-com-cerebro #formacao {
+  position: relative;
+  margin-bottom: 0;
+  z-index: 2;
+}
+
+#formacao h2,
+#formacao article {
+  position: relative;
+  z-index: 2;
+}
+
+.formacao-conteudo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: stretch;
+  height: calc(100% - 72px);
+  min-height: 0;
+}
+
+.formacao-conteudo article {
+  min-height: 0;
+}
+
+.formacao-conteudo article:first-child {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 12px;
+  border-radius: 18px;
+}
+
+.formacao-conteudo article:first-child p {
+  margin-bottom: 0;
+}
+
+.certificados-coluna {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+.certificados-coluna h3 {
+  margin: 0;
+}
+
+.certificados-formacao {
+  height: 100%;
+  max-height: none;
+  overflow-y: auto;
+  border-left: 1px solid rgba(200, 162, 255, 0.22);
+  border-radius: 18px;
+}
+
+.certificados-formacao ul {
   list-style: none;
   margin: 0;
-  padding-left: 18px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.certificados-formacao a {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  color: var(--texto-claro);
+  text-decoration: none;
+  background: rgba(124, 44, 255, 0.12);
+  border: 1px solid rgba(200, 162, 255, 0.16);
+  border-radius: 12px;
+}
+
+.certificados-formacao a span {
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.certificados-formacao a small {
+  color: var(--texto-suave);
+  font-size: 0.78rem;
+}
+
+.certificados-formacao a:hover,
+.certificados-formacao a:focus-visible {
+  border-color: rgba(200, 162, 255, 0.34);
+  background: rgba(124, 44, 255, 0.18);
+}
+
+.formacao-com-preview {
+  position: relative;
+  margin-bottom: var(--espaco-slide);
+  overflow: visible;
+  isolation: isolate;
+}
+
+.formacao-com-preview #formacao {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.preview-cerebro-formacao {
+  position: absolute;
+  --luz-cerebro-preview-x: 50%;
+  --luz-cerebro-preview-y: 50%;
+  top: 50%;
+  right: clamp(-310px, -18vw, -210px);
+  z-index: 3;
+  width: clamp(280px, 26vw, 410px);
+  height: clamp(300px, 38vh, 430px);
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  opacity: var(--opacidade-cerebro-preview, 0);
+  mask-image: radial-gradient(circle at var(--luz-cerebro-preview-x) var(--luz-cerebro-preview-y), #000 0 120px, rgba(0, 0, 0, 0.74) 230px, transparent 390px);
+  -webkit-mask-image: radial-gradient(circle at var(--luz-cerebro-preview-x) var(--luz-cerebro-preview-y), #000 0 120px, rgba(0, 0, 0, 0.74) 230px, transparent 390px);
+  transform: translateY(-50%);
+  transition: opacity 0.42s ease;
+}
+
+.preview-cerebro-formacao.cerebro-preview-visivel {
+  opacity: var(--opacidade-cerebro-preview, 0);
+}
+
+.preview-cerebro-card {
+  position: relative;
+  top: auto;
+  right: auto;
+  z-index: 1;
+  align-self: center;
+  justify-self: center;
+  width: min(112%, 620px);
+  height: 470px;
+  min-height: 470px;
+  max-height: 510px;
+  transform: none;
+}
+
+.formacao-com-cerebro .cerebro-holograma {
+  position: absolute;
+  left: auto;
+  right: clamp(-104px, -5.4vw, -58px);
+  top: 50%;
+  z-index: 3;
+  width: clamp(180px, 15vw, 240px);
+  height: min(34vh, 255px);
+  opacity: 1;
+  filter:
+    brightness(1.18)
+    contrast(1.34)
+    saturate(1.72)
+    drop-shadow(0 0 8px rgba(210, 178, 255, 0.28))
+    drop-shadow(0 0 18px rgba(115, 70, 255, 0.34));
+  transform: translateY(-50%);
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.links-contato {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.links-contato a {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 116px;
+  padding: 18px 14px;
+  color: var(--texto-claro);
+  text-decoration: none;
+  background: rgba(27, 18, 46, 0.58);
+  border: 1px solid rgba(200, 162, 255, 0.16);
+  border-radius: 18px;
+  transition: 0.2s ease;
+}
+
+.links-contato a:hover,
+.links-contato a:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(200, 162, 255, 0.36);
+  background: rgba(124, 44, 255, 0.16);
+  box-shadow: 0 14px 34px rgba(84, 34, 160, 0.2);
+}
+
+.links-contato svg {
+  width: 32px;
+  height: 32px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.links-contato a:nth-child(3) svg,
+.links-contato a:nth-child(4) svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+.links-contato span {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.ascii-obrigado {
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  min-height: 455px;
+  margin-top: 0;
+  padding-bottom: 0;
+  text-align: center;
+  color: var(--roxo-claro);
+}
+
+.ascii-obrigado pre {
+  display: inline-block;
+  margin: 0;
+  font-family: "Courier New", monospace;
+  font-size: clamp(3.6rem, 6.8vw, 6.4rem);
+  line-height: 0.78;
+  letter-spacing: 0;
+  color: #f4e8ff;
+  text-shadow:
+    0 0 10px rgba(200, 162, 255, 0.48),
+    0 0 28px rgba(124, 44, 255, 0.3);
+}
+
+.ascii-obrigado p {
+  margin: 10px 0 0;
+  color: var(--texto-suave);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.olho-piscando {
+  display: inline-block;
+  animation: piscarAscii 3.6s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes piscarAscii {
+  0%,
+  84%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  88%,
+  92% {
+    transform: scaleY(0.14);
+  }
 }
 
 /* Rodape */
@@ -2212,6 +2510,53 @@ video {
     padding-right: 26px;
   }
 
+  #formacao {
+    padding-right: 26px;
+  }
+
+  .formacao-conteudo {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    height: auto;
+  }
+
+  .formacao-conteudo article:first-child {
+    border-radius: 18px;
+  }
+
+  .certificados-formacao {
+    height: auto;
+    max-height: 240px;
+    border-left: 1px solid rgba(200, 162, 255, 0.16);
+    border-radius: 18px;
+  }
+
+  .links-contato {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .preview-cerebro-formacao {
+    right: -190px;
+    width: 250px;
+    height: 300px;
+  }
+
+  .preview-cerebro-card {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    height: 400px;
+    min-height: 400px;
+    transform: none;
+  }
+
+  .formacao-com-cerebro .cerebro-holograma {
+    right: -74px;
+    width: 240px;
+    height: 300px;
+  }
+
   .gif-sobre {
     right: -18px;
     top: auto;
@@ -2315,6 +2660,24 @@ video {
 }
 
 @media (max-width: 560px) {
+  .formacao-com-preview #formacao {
+    max-width: none;
+  }
+
+  .preview-cerebro-formacao {
+    display: none;
+  }
+
+  .preview-cerebro-card {
+    display: block;
+    height: 360px;
+    min-height: 360px;
+  }
+
+  .formacao-com-cerebro .cerebro-holograma {
+    display: none;
+  }
+
   #inicio {
     padding-right: 20px;
   }
@@ -2332,6 +2695,10 @@ video {
 
   .conteudo-principal {
     padding: 82px 12px 18px;
+  }
+
+  .links-contato {
+    grid-template-columns: 1fr;
   }
 
   .secao {

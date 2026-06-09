@@ -8,6 +8,8 @@ const olhosAvatar = document.querySelectorAll(".olho-avatar");
 const silhuetaTopoCard = document.querySelector(".silhueta-topo-card");
 const imagemSilhueta = document.querySelector(".silhueta-topo-card img");
 const imagemHologramaEsquerda = document.querySelector(".gif-sobre-esquerda");
+const cerebroHolograma = document.querySelector(".cerebro-holograma");
+const previewCerebroFormacao = document.querySelector(".preview-cerebro-formacao");
 const terminalSaida = document.querySelector(".terminal-saida");
 const terminalTexto = document.querySelector("#terminal-texto");
 const mapaProjetos = document.querySelector("#mapaProjetos");
@@ -255,10 +257,21 @@ let mouseCodigoY = -1000;
 const raioLuzCodigo = 330;
 let mouseAtual = null;
 let mousePendente = false;
+let gameProjetosVisivel = false;
 let quadroSilhueta = 1;
 let animacaoSilhueta = null;
 let quadroHologramaEsquerda = 1;
 let animacaoHologramaEsquerda = null;
+let renderizadorCerebro = null;
+let cenaCerebro = null;
+let cameraCerebro = null;
+let modeloCerebro = null;
+let animacaoCerebro = null;
+let tempoAnteriorCerebro = 0;
+let proximoGlitchCerebro = 0;
+let inicioGlitchCerebro = -1;
+let duracaoGlitchCerebro = 0;
+let sementeGlitchCerebro = 0;
 let terminalDigitado = false;
 let esperaTerminal = null;
 let idSecaoAtual = "";
@@ -342,6 +355,8 @@ function processarMouse() {
   moverLuzCard(evento);
   moverLuzSilhueta(evento);
   moverLuzHologramaEsquerda(evento);
+  moverLuzCerebro(evento);
+  moverLuzPreviewCerebro(evento);
   moverOlhos(evento);
   moverAvatar(evento);
 
@@ -399,6 +414,48 @@ function moverLuzHologramaEsquerda(evento) {
   imagemHologramaEsquerda.style.setProperty("--luz-holograma-x", luzX + "px");
   imagemHologramaEsquerda.style.setProperty("--luz-holograma-y", luzY + "px");
   imagemHologramaEsquerda.classList.toggle("holograma-visivel", visivel);
+}
+
+function moverLuzCerebro(evento) {
+  if (!cerebroHolograma) {
+    return;
+  }
+
+  const posicao = cerebroHolograma.getBoundingClientRect();
+  const luzX = evento.clientX - posicao.left;
+  const luzY = evento.clientY - posicao.top;
+  const distanciaX = luzX - posicao.width / 2;
+  const distanciaY = luzY - posicao.height / 2;
+  const distancia = Math.sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
+  const alcance = Math.max(posicao.width, posicao.height) * 0.72;
+  const visivel = luzX > -120 && luzX < posicao.width + 120 && luzY > -120 && luzY < posicao.height + 120 && distancia < alcance;
+
+  cerebroHolograma.style.setProperty("--luz-cerebro-x", luzX + "px");
+  cerebroHolograma.style.setProperty("--luz-cerebro-y", luzY + "px");
+  cerebroHolograma.classList.toggle("cerebro-visivel", visivel);
+}
+
+function moverLuzPreviewCerebro(evento) {
+  if (!previewCerebroFormacao) {
+    return;
+  }
+
+  const posicao = previewCerebroFormacao.getBoundingClientRect();
+  const luzX = evento.clientX - posicao.left;
+  const luzY = evento.clientY - posicao.top;
+  const distanciaX = luzX - posicao.width / 2;
+  const distanciaY = luzY - posicao.height / 2;
+  const distancia = Math.sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
+  const alcance = Math.max(posicao.width, posicao.height) * 1.12;
+  const progresso = Math.max(0, Math.min(1, 1 - distancia / alcance));
+  const opacidade = progresso * progresso * (3 - 2 * progresso);
+  const dentroDaArea = luzX > -220 && luzX < posicao.width + 220 && luzY > -220 && luzY < posicao.height + 220;
+  const opacidadeFinal = dentroDaArea ? opacidade : 0;
+
+  previewCerebroFormacao.style.setProperty("--luz-cerebro-preview-x", luzX + "px");
+  previewCerebroFormacao.style.setProperty("--luz-cerebro-preview-y", luzY + "px");
+  previewCerebroFormacao.style.setProperty("--opacidade-cerebro-preview", opacidadeFinal.toFixed(3));
+  previewCerebroFormacao.classList.toggle("cerebro-preview-visivel", opacidadeFinal > 0.01);
 }
 
 function criarFundoCodigo() {
@@ -819,6 +876,1216 @@ function pararHologramaEsquerda() {
 
   clearInterval(animacaoHologramaEsquerda);
   animacaoHologramaEsquerda = null;
+}
+
+function multiplicarMatriz(a, b) {
+  const resultado = new Array(16);
+
+  for (let coluna = 0; coluna < 4; coluna += 1) {
+    for (let linha = 0; linha < 4; linha += 1) {
+      resultado[coluna * 4 + linha] =
+        a[linha] * b[coluna * 4] +
+        a[4 + linha] * b[coluna * 4 + 1] +
+        a[8 + linha] * b[coluna * 4 + 2] +
+        a[12 + linha] * b[coluna * 4 + 3];
+    }
+  }
+
+  return resultado;
+}
+
+function aplicarMatrizPonto(matriz, x, y, z) {
+  return [
+    matriz[0] * x + matriz[4] * y + matriz[8] * z + matriz[12],
+    matriz[1] * x + matriz[5] * y + matriz[9] * z + matriz[13],
+    matriz[2] * x + matriz[6] * y + matriz[10] * z + matriz[14]
+  ];
+}
+
+function matrizDoNode(node) {
+  if (node.matrix) {
+    return node.matrix;
+  }
+
+  const x = node.translation ? node.translation[0] : 0;
+  const y = node.translation ? node.translation[1] : 0;
+  const z = node.translation ? node.translation[2] : 0;
+
+  return [
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    x, y, z, 1
+  ];
+}
+
+function criarTexturaPontoHolograma() {
+  const canvas = document.createElement("canvas");
+  const tamanho = 64;
+  const centro = tamanho / 2;
+  const contexto = canvas.getContext("2d");
+  canvas.width = tamanho;
+  canvas.height = tamanho;
+
+  const gradiente = contexto.createRadialGradient(centro, centro, 0, centro, centro, centro);
+  gradiente.addColorStop(0, "rgba(255, 255, 255, 1)");
+  gradiente.addColorStop(0.28, "rgba(205, 178, 255, 0.9)");
+  gradiente.addColorStop(0.58, "rgba(128, 68, 255, 0.42)");
+  gradiente.addColorStop(1, "rgba(20, 4, 60, 0)");
+
+  contexto.fillStyle = gradiente;
+  contexto.fillRect(0, 0, tamanho, tamanho);
+
+  const textura = new THREE.CanvasTexture(canvas);
+  textura.needsUpdate = true;
+  return textura;
+}
+
+function lerModeloGlb(bufferGlb) {
+  const dados = new DataView(bufferGlb);
+  const tamanhoJson = dados.getUint32(12, true);
+  const textoJson = new TextDecoder().decode(new Uint8Array(bufferGlb, 20, tamanhoJson));
+  const json = JSON.parse(textoJson);
+  const inicioBin = 20 + tamanhoJson + 8;
+  const posicoes = [];
+  const cores = [];
+  const identidade = [
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+  ];
+  const malhas = [];
+  let totalPontos = 0;
+
+  function visitarNode(indiceNode, matrizPai) {
+    const node = json.nodes[indiceNode];
+    const matrizAtual = multiplicarMatriz(matrizPai, matrizDoNode(node));
+
+    if (node.mesh !== undefined) {
+      malhas.push({
+        mesh: json.meshes[node.mesh],
+        matriz: matrizAtual
+      });
+    }
+
+    (node.children || []).forEach(function (filho) {
+      visitarNode(filho, matrizAtual);
+    });
+  }
+
+  json.scenes[json.scene || 0].nodes.forEach(function (indiceNode) {
+    visitarNode(indiceNode, identidade);
+  });
+
+  malhas.forEach(function (item) {
+    item.mesh.primitives.forEach(function (primitive) {
+      totalPontos += json.accessors[primitive.attributes.POSITION].count;
+    });
+  });
+
+  const intervalo = 1;
+  let minX = Infinity;
+  let minY = Infinity;
+  let minZ = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  let maxZ = -Infinity;
+
+  malhas.forEach(function (item) {
+    item.mesh.primitives.forEach(function (primitive) {
+      const indiceAccessor = primitive.attributes.POSITION;
+      const accessor = json.accessors[indiceAccessor];
+      const view = json.bufferViews[accessor.bufferView];
+      const byteOffset = inicioBin + (view.byteOffset || 0) + (accessor.byteOffset || 0);
+      const passo = view.byteStride || 12;
+      const indiceCor = primitive.attributes.COLOR_0;
+      const accessorCor = indiceCor !== undefined ? json.accessors[indiceCor] : null;
+      const viewCor = accessorCor ? json.bufferViews[accessorCor.bufferView] : null;
+      const byteOffsetCor = viewCor ? inicioBin + (viewCor.byteOffset || 0) + (accessorCor.byteOffset || 0) : 0;
+      const passoCor = viewCor ? viewCor.byteStride || 16 : 0;
+
+      for (let i = 0; i < accessor.count; i += intervalo) {
+        const indice = byteOffset + i * passo;
+        const ponto = aplicarMatrizPonto(
+          item.matriz,
+          dados.getFloat32(indice, true),
+          dados.getFloat32(indice + 4, true),
+          dados.getFloat32(indice + 8, true)
+        );
+        const x = ponto[0];
+        const y = ponto[1];
+        const z = ponto[2];
+
+        posicoes.push(x, y, z);
+
+        if (accessorCor) {
+          const indiceCorAtual = byteOffsetCor + i * passoCor;
+          const alpha = dados.getFloat32(indiceCorAtual + 12, true);
+          cores.push(0.42 + alpha * 0.22, 0.0 + alpha * 0.1, 0.9 + alpha * 0.1);
+        } else {
+          cores.push(0.48, 0.08, 1);
+        }
+
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        minZ = Math.min(minZ, z);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+        maxZ = Math.max(maxZ, z);
+      }
+    });
+  });
+
+  const centroX = (minX + maxX) / 2;
+  const centroY = (minY + maxY) / 2;
+  const centroZ = (minZ + maxZ) / 2;
+  const maiorLado = Math.max(maxX - minX, maxY - minY, maxZ - minZ) || 1;
+
+  for (let i = 0; i < posicoes.length; i += 3) {
+    posicoes[i] = (posicoes[i] - centroX) / maiorLado;
+    posicoes[i + 1] = (posicoes[i + 1] - centroY) / maiorLado;
+    posicoes[i + 2] = (posicoes[i + 2] - centroZ) / maiorLado;
+  }
+
+  return {
+    posicoes: new Float32Array(posicoes),
+    cores: new Float32Array(cores)
+  };
+}
+
+function numeroAleatorioSimples(valor) {
+  const ruido = Math.sin(valor * 127.1 + 311.7) * 43758.5453;
+  return ruido - Math.floor(ruido);
+}
+
+function criarGeometriaInternaCerebro(posicoesOriginais) {
+  const posicoes = [];
+  const energias = [];
+  const camadas = [];
+  const totalPontos = posicoesOriginais.length / 3;
+  const quantidadeCamadas = 11;
+
+  for (let i = 0; i < totalPontos; i += 1) {
+    const x = posicoesOriginais[i * 3];
+    const y = posicoesOriginais[i * 3 + 1];
+    const z = posicoesOriginais[i * 3 + 2];
+
+    for (let camada = 0; camada < quantidadeCamadas; camada += 1) {
+      const base = i * 13.37 + camada * 41.9;
+      const faixa = (camada + 0.5) / quantidadeCamadas;
+      const variacao = (numeroAleatorioSimples(base) - 0.5) * 0.09;
+      const profundidade = Math.min(0.96, Math.max(0.12, 0.1 + faixa * 0.86 + variacao));
+
+      posicoes.push(
+        x * profundidade,
+        y * profundidade,
+        z * profundidade
+      );
+      energias.push(Math.abs(numeroAleatorioSimples(base + 17.5)));
+      camadas.push(faixa);
+    }
+  }
+
+  const geometria = new THREE.BufferGeometry();
+  geometria.setAttribute("position", new THREE.BufferAttribute(new Float32Array(posicoes), 3));
+  geometria.setAttribute("energia", new THREE.BufferAttribute(new Float32Array(energias), 1));
+  geometria.setAttribute("camada", new THREE.BufferAttribute(new Float32Array(camadas), 1));
+  geometria.computeBoundingSphere();
+
+  return geometria;
+}
+
+function criarMaterialInternoCerebro() {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      corBase: { value: new THREE.Color(0x4a3dff) },
+      corViva: { value: new THREE.Color(0x6a5cff) },
+      corBorda: { value: new THREE.Color(0xa78bff) },
+      opacidadeInterna: { value: 0.56 },
+      tamanhoPontoInterno: { value: 1.9 },
+      glitchCerebro: { value: 0 },
+      sementeGlitch: { value: 0 }
+    },
+    vertexShader: [
+      "attribute float energia;",
+      "attribute float camada;",
+      "uniform float tamanhoPontoInterno;",
+      "uniform float glitchCerebro;",
+      "uniform float sementeGlitch;",
+      "varying float vEnergia;",
+      "varying float vCamada;",
+      "varying vec3 vLocal;",
+      "void main() {",
+      "  vEnergia = energia;",
+      "  vCamada = camada;",
+      "  vLocal = position;",
+      "  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);",
+      "  gl_Position = projectionMatrix * mvPosition;",
+      "  float faixaGlitch = step(0.9, sin((position.y + sementeGlitch) * 96.0) * 0.5 + 0.5);",
+      "  gl_Position.x += faixaGlitch * glitchCerebro * 0.008 * gl_Position.w;",
+      "  gl_PointSize = tamanhoPontoInterno * (0.86 + energia * 0.76 + camada * 0.22);",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform vec3 corBase;",
+      "uniform vec3 corViva;",
+      "uniform vec3 corBorda;",
+      "uniform float opacidadeInterna;",
+      "uniform float glitchCerebro;",
+      "varying float vEnergia;",
+      "varying float vCamada;",
+      "varying vec3 vLocal;",
+      "float noise3d(vec3 p) {",
+      "  return fract(sin(dot(p, vec3(17.13, 43.71, 91.17))) * 43758.5453);",
+      "}",
+      "void main() {",
+      "  vec2 centro = gl_PointCoord - vec2(0.5);",
+      "  float ponto = 1.0 - smoothstep(0.2, 0.5, length(centro));",
+      "  if (ponto <= 0.01) discard;",
+      "  float camadaA = sin(length(vLocal) * 82.0 + vLocal.y * 32.0) * 0.5 + 0.5;",
+      "  float camadaB = sin(vLocal.x * 74.0 - vLocal.z * 58.0 + vLocal.y * 21.0) * 0.5 + 0.5;",
+      "  float ruido = noise3d(vLocal * 48.0 + vec3(vEnergia * 9.0));",
+      "  float faixaInterna = 0.72 + sin(vCamada * 28.0) * 0.14;",
+      "  float volume = smoothstep(0.28, 0.92, camadaA) * 0.42 + smoothstep(0.34, 0.9, camadaB) * 0.3 + ruido * 0.28;",
+      "  vec3 cor = mix(corBase, corViva, 0.18 + vEnergia * 0.46 + volume * 0.2);",
+      "  cor = mix(cor, corBorda, smoothstep(0.64, 1.0, volume) * 0.34);",
+      "  cor.r += glitchCerebro * 0.045;",
+      "  cor.b += glitchCerebro * 0.06;",
+      "  float alpha = ponto * opacidadeInterna * faixaInterna * (0.48 + volume * 0.92);",
+      "  gl_FragColor = vec4(cor * (0.82 + volume * 0.72), alpha);",
+      "}"
+    ].join("\n"),
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false
+  });
+}
+
+function criarGeometriaMicroPontosCerebro(posicoesOriginais) {
+  const posicoes = [];
+  const energias = [];
+  const totalPontos = posicoesOriginais.length / 3;
+  const amostrasPorPonto = 4;
+
+  for (let i = 0; i < totalPontos; i += 1) {
+    const x = posicoesOriginais[i * 3];
+    const y = posicoesOriginais[i * 3 + 1];
+    const z = posicoesOriginais[i * 3 + 2];
+    const energiaBase = numeroAleatorioSimples(i * 5.7 + 2.4);
+    const sulco = calcularSulcoCerebro(x, y, z);
+    const relevo = sulco <= 0.28 || sulco >= 0.88;
+    const depressao = sulco > 0.5 && sulco < 0.78;
+    const energiaAnatomica = relevo ? 0.86 + energiaBase * 0.14 : depressao ? 0.18 + energiaBase * 0.18 : 0.38 + energiaBase * 0.34;
+
+    for (let amostra = 0; amostra < amostrasPorPonto; amostra += 1) {
+      const base = i * 9.7 + amostra * 31.3;
+      const escala = 0.986 + numeroAleatorioSimples(base) * 0.013;
+      const energiaAmostra = Math.min(1, energiaAnatomica * (0.82 + numeroAleatorioSimples(base + 4.2) * 0.36));
+
+      posicoes.push(x * escala, y * escala, z * escala);
+      energias.push(energiaAmostra);
+    }
+  }
+
+  const geometria = new THREE.BufferGeometry();
+  geometria.setAttribute("position", new THREE.BufferAttribute(new Float32Array(posicoes), 3));
+  geometria.setAttribute("energia", new THREE.BufferAttribute(new Float32Array(energias), 1));
+  geometria.computeBoundingSphere();
+
+  return geometria;
+}
+
+function criarMaterialMicroPontosCerebro() {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      corBase: { value: new THREE.Color(0x4a3dff) },
+      corViva: { value: new THREE.Color(0x6a5cff) },
+      corBorda: { value: new THREE.Color(0xa78bff) },
+      opacidadeMicro: { value: 0.18 },
+      tamanhoMicro: { value: 0.82 },
+      glitchCerebro: { value: 0 },
+      sementeGlitch: { value: 0 }
+    },
+    vertexShader: [
+      "attribute float energia;",
+      "uniform float tamanhoMicro;",
+      "uniform float glitchCerebro;",
+      "uniform float sementeGlitch;",
+      "varying float vEnergia;",
+      "varying vec3 vLocal;",
+      "void main() {",
+      "  vEnergia = energia;",
+      "  vLocal = position;",
+      "  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);",
+      "  gl_Position = projectionMatrix * mvPosition;",
+      "  float faixaGlitch = step(0.9, sin((position.y + sementeGlitch) * 116.0) * 0.5 + 0.5);",
+      "  gl_Position.x += faixaGlitch * glitchCerebro * 0.006 * gl_Position.w;",
+      "  gl_PointSize = tamanhoMicro * (0.62 + energia * 0.7);",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform vec3 corBase;",
+      "uniform vec3 corViva;",
+      "uniform vec3 corBorda;",
+      "uniform float opacidadeMicro;",
+      "varying float vEnergia;",
+      "varying vec3 vLocal;",
+      "float noiseMicro(vec3 p) {",
+      "  return fract(sin(dot(p, vec3(23.17, 51.31, 77.47))) * 43758.5453);",
+      "}",
+      "void main() {",
+      "  vec2 centro = gl_PointCoord - vec2(0.5);",
+      "  float ponto = 1.0 - smoothstep(0.12, 0.42, length(centro));",
+      "  if (ponto <= 0.01) discard;",
+      "  float pulso = noiseMicro(vLocal * 96.0);",
+      "  vec3 cor = mix(corBase, corViva, 0.22 + vEnergia * 0.42);",
+      "  cor = mix(cor, corBorda, smoothstep(0.72, 1.0, vEnergia) * 0.3);",
+      "  float energia = 0.64 + vEnergia * 1.02 + pulso * 0.22;",
+      "  gl_FragColor = vec4(cor * energia, ponto * opacidadeMicro * (0.46 + vEnergia * 0.54));",
+      "}"
+    ].join("\n"),
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false
+  });
+}
+
+function criarGeometriaMicroLinhasCerebro(posicoesOriginais) {
+  const posicoes = [];
+  const intensidades = [];
+  const totalPontos = posicoesOriginais.length / 3;
+  const tamanhoCelula = 0.038;
+  const mapa = {};
+  const usados = {};
+
+  function chaveCelula(x, y, z) {
+    return [
+      Math.floor(x / tamanhoCelula),
+      Math.floor(y / tamanhoCelula),
+      Math.floor(z / tamanhoCelula)
+    ].join(",");
+  }
+
+  for (let i = 0; i < totalPontos; i += 1) {
+    const x = posicoesOriginais[i * 3];
+    const y = posicoesOriginais[i * 3 + 1];
+    const z = posicoesOriginais[i * 3 + 2];
+    const chave = chaveCelula(x, y, z);
+
+    if (!mapa[chave]) {
+      mapa[chave] = [];
+    }
+
+    mapa[chave].push(i);
+  }
+
+  for (let i = 0; i < totalPontos; i += 1) {
+    if (numeroAleatorioSimples(i * 2.9) < 0.42) {
+      continue;
+    }
+
+    const x = posicoesOriginais[i * 3];
+    const y = posicoesOriginais[i * 3 + 1];
+    const z = posicoesOriginais[i * 3 + 2];
+    const cx = Math.floor(x / tamanhoCelula);
+    const cy = Math.floor(y / tamanhoCelula);
+    const cz = Math.floor(z / tamanhoCelula);
+    let melhorIndice = -1;
+    let melhorDistancia = 0.0028;
+
+    for (let dx = -1; dx <= 1; dx += 1) {
+      for (let dy = -1; dy <= 1; dy += 1) {
+        for (let dz = -1; dz <= 1; dz += 1) {
+          const lista = mapa[[cx + dx, cy + dy, cz + dz].join(",")] || [];
+
+          lista.forEach(function (indiceVizinho) {
+            if (indiceVizinho <= i) {
+              return;
+            }
+
+            const vx = posicoesOriginais[indiceVizinho * 3];
+            const vy = posicoesOriginais[indiceVizinho * 3 + 1];
+            const vz = posicoesOriginais[indiceVizinho * 3 + 2];
+            const distancia =
+              (x - vx) * (x - vx) +
+              (y - vy) * (y - vy) +
+              (z - vz) * (z - vz);
+            const diferencaRaio = Math.abs(length3(x, y, z) - length3(vx, vy, vz));
+
+            if (diferencaRaio > 0.028 || distancia < 0.00012 || distancia > melhorDistancia) {
+              return;
+            }
+
+            melhorDistancia = distancia;
+            melhorIndice = indiceVizinho;
+          });
+        }
+      }
+    }
+
+    if (melhorIndice < 0 || usados[i + "-" + melhorIndice]) {
+      continue;
+    }
+
+    usados[i + "-" + melhorIndice] = true;
+    const vx = posicoesOriginais[melhorIndice * 3];
+    const vy = posicoesOriginais[melhorIndice * 3 + 1];
+    const vz = posicoesOriginais[melhorIndice * 3 + 2];
+    const intensidade = 0.28 + numeroAleatorioSimples(i * 7.4) * 0.48;
+
+    posicoes.push(x, y, z, vx, vy, vz);
+    intensidades.push(intensidade, intensidade);
+  }
+
+  const geometria = new THREE.BufferGeometry();
+  geometria.setAttribute("position", new THREE.BufferAttribute(new Float32Array(posicoes), 3));
+  geometria.setAttribute("intensidade", new THREE.BufferAttribute(new Float32Array(intensidades), 1));
+  geometria.computeBoundingSphere();
+
+  return geometria;
+}
+
+function length3(x, y, z) {
+  return Math.sqrt(x * x + y * y + z * z);
+}
+
+function criarMaterialMicroLinhasCerebro() {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      corBase: { value: new THREE.Color(0x4a3dff) },
+      corViva: { value: new THREE.Color(0x6a5cff) },
+      corBorda: { value: new THREE.Color(0xa78bff) },
+      opacidadeMicroLinha: { value: 0.075 },
+      glitchCerebro: { value: 0 },
+      sementeGlitch: { value: 0 }
+    },
+    vertexShader: [
+      "attribute float intensidade;",
+      "uniform float glitchCerebro;",
+      "uniform float sementeGlitch;",
+      "varying float vIntensidade;",
+      "void main() {",
+      "  vIntensidade = intensidade;",
+      "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+      "  float faixaGlitch = step(0.9, sin((position.y + sementeGlitch) * 108.0) * 0.5 + 0.5);",
+      "  gl_Position.x += faixaGlitch * glitchCerebro * 0.005 * gl_Position.w;",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform vec3 corBase;",
+      "uniform vec3 corViva;",
+      "uniform vec3 corBorda;",
+      "uniform float opacidadeMicroLinha;",
+      "varying float vIntensidade;",
+      "void main() {",
+      "  vec3 cor = mix(corBase, corViva, 0.38 + vIntensidade * 0.32);",
+      "  cor = mix(cor, corBorda, vIntensidade * 0.12);",
+      "  gl_FragColor = vec4(cor * (0.34 + vIntensidade * 0.24), opacidadeMicroLinha * vIntensidade);",
+      "}"
+    ].join("\n"),
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false
+  });
+}
+
+function calcularSulcoCerebro(x, y, z) {
+  const dobraA = Math.sin(x * 54.0 + z * 38.0 + y * 22.0);
+  const dobraB = Math.sin(x * 86.0 - z * 42.0 + y * 31.0);
+  const dobraC = Math.sin((x - z) * 68.0 + y * 18.0);
+  const mistura = (dobraA * 0.48 + dobraB * 0.34 + dobraC * 0.18) * 0.5 + 0.5;
+
+  return mistura;
+}
+
+function criarGeometriaSulcosCerebro(posicoesOriginais) {
+  const posicoes = [];
+  const intensidades = [];
+  const contrastes = [];
+  const profundidades = [];
+  const totalPontos = posicoesOriginais.length / 3;
+  const tamanhoCelula = 0.035;
+  const mapa = {};
+  const usados = {};
+
+  function chaveCelula(x, y, z) {
+    return [
+      Math.floor(x / tamanhoCelula),
+      Math.floor(y / tamanhoCelula),
+      Math.floor(z / tamanhoCelula)
+    ].join(",");
+  }
+
+  for (let i = 0; i < totalPontos; i += 1) {
+    const x = posicoesOriginais[i * 3];
+    const y = posicoesOriginais[i * 3 + 1];
+    const z = posicoesOriginais[i * 3 + 2];
+    const chave = chaveCelula(x, y, z);
+
+    if (!mapa[chave]) {
+      mapa[chave] = [];
+    }
+
+    mapa[chave].push(i);
+  }
+
+  for (let i = 0; i < totalPontos; i += 1) {
+    const x = posicoesOriginais[i * 3];
+    const y = posicoesOriginais[i * 3 + 1];
+    const z = posicoesOriginais[i * 3 + 2];
+    const sulco = calcularSulcoCerebro(x, y, z);
+    const depressao = sulco > 0.42 && sulco < 0.82;
+    const relevo = sulco <= 0.38 || sulco >= 0.8;
+    const pontoAnatomico = depressao || relevo;
+    const chance = relevo ? 0.02 : 0.06;
+
+    if (!pontoAnatomico || numeroAleatorioSimples(i + 6.2) < chance) {
+      continue;
+    }
+
+    const cx = Math.floor(x / tamanhoCelula);
+    const cy = Math.floor(y / tamanhoCelula);
+    const cz = Math.floor(z / tamanhoCelula);
+    let melhorIndice = -1;
+    let melhorDistancia = 0.0036;
+
+    for (let dx = -1; dx <= 1; dx += 1) {
+      for (let dy = -1; dy <= 1; dy += 1) {
+        for (let dz = -1; dz <= 1; dz += 1) {
+          const lista = mapa[[cx + dx, cy + dy, cz + dz].join(",")] || [];
+
+          lista.forEach(function (indiceVizinho) {
+            if (indiceVizinho <= i) {
+              return;
+            }
+
+            const vx = posicoesOriginais[indiceVizinho * 3];
+            const vy = posicoesOriginais[indiceVizinho * 3 + 1];
+            const vz = posicoesOriginais[indiceVizinho * 3 + 2];
+            const sulcoVizinho = calcularSulcoCerebro(vx, vy, vz);
+            const depressaoVizinha = sulcoVizinho > 0.42 && sulcoVizinho < 0.82;
+            const relevoVizinho = sulcoVizinho <= 0.38 || sulcoVizinho >= 0.8;
+
+            if (depressao !== depressaoVizinha || relevo !== relevoVizinho || Math.abs(sulco - sulcoVizinho) > 0.24) {
+              return;
+            }
+
+            const distancia =
+              (x - vx) * (x - vx) +
+              (y - vy) * (y - vy) +
+              (z - vz) * (z - vz);
+
+            if (distancia < melhorDistancia) {
+              melhorDistancia = distancia;
+              melhorIndice = indiceVizinho;
+            }
+          });
+        }
+      }
+    }
+
+    if (melhorIndice < 0 || usados[i + "-" + melhorIndice]) {
+      continue;
+    }
+
+    usados[i + "-" + melhorIndice] = true;
+    const vx = posicoesOriginais[melhorIndice * 3];
+    const vy = posicoesOriginais[melhorIndice * 3 + 1];
+    const vz = posicoesOriginais[melhorIndice * 3 + 2];
+    const intensidade = 0.34 + sulco * 0.66;
+    const contraste = relevo ? 1.34 : 0.02;
+    const profundidade = depressao ? 1 : 0;
+
+    posicoes.push(x, y, z, vx, vy, vz);
+    intensidades.push(intensidade, intensidade);
+    contrastes.push(contraste, contraste);
+    profundidades.push(profundidade, profundidade);
+  }
+
+  const geometria = new THREE.BufferGeometry();
+  geometria.setAttribute("position", new THREE.BufferAttribute(new Float32Array(posicoes), 3));
+  geometria.setAttribute("intensidade", new THREE.BufferAttribute(new Float32Array(intensidades), 1));
+  geometria.setAttribute("contraste", new THREE.BufferAttribute(new Float32Array(contrastes), 1));
+  geometria.setAttribute("profundidade", new THREE.BufferAttribute(new Float32Array(profundidades), 1));
+  geometria.computeBoundingSphere();
+
+  return geometria;
+}
+
+function criarMaterialSulcosCerebro() {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      corBase: { value: new THREE.Color(0x4a3dff) },
+      corViva: { value: new THREE.Color(0x6a5cff) },
+      corBorda: { value: new THREE.Color(0xa78bff) },
+      opacidadeSulco: { value: 0.42 },
+      glitchCerebro: { value: 0 },
+      sementeGlitch: { value: 0 }
+    },
+    vertexShader: [
+      "attribute float intensidade;",
+      "attribute float contraste;",
+      "attribute float profundidade;",
+      "uniform float glitchCerebro;",
+      "uniform float sementeGlitch;",
+      "varying float vIntensidade;",
+      "varying float vContraste;",
+      "varying float vProfundidade;",
+      "void main() {",
+      "  vIntensidade = intensidade;",
+      "  vContraste = contraste;",
+      "  vProfundidade = profundidade;",
+      "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+      "  float faixaGlitch = step(0.9, sin((position.y + sementeGlitch) * 86.0) * 0.5 + 0.5);",
+      "  gl_Position.x += faixaGlitch * glitchCerebro * 0.007 * gl_Position.w;",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform vec3 corBase;",
+      "uniform vec3 corViva;",
+      "uniform vec3 corBorda;",
+      "uniform float opacidadeSulco;",
+      "varying float vIntensidade;",
+      "varying float vContraste;",
+      "varying float vProfundidade;",
+      "void main() {",
+      "  vec3 cor = mix(corBase, corViva, 0.34 + vIntensidade * 0.34);",
+      "  cor = mix(cor, corBorda, vIntensidade * 0.28);",
+      "  float energiaAnatomica = 0.12 + vContraste * 1.28;",
+      "  energiaAnatomica *= 1.0 - vProfundidade * 0.62;",
+      "  gl_FragColor = vec4(cor * (0.72 + vIntensidade * 0.42) * energiaAnatomica, opacidadeSulco * (0.42 + vIntensidade * 0.58));",
+      "}"
+    ].join("\n"),
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false
+  });
+}
+
+function criarMaterialHaloCerebro() {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      corHalo: { value: new THREE.Color(0x6a5cff) },
+      corBorda: { value: new THREE.Color(0xa78bff) },
+      opacidadeHalo: { value: 0.22 },
+      tamanhoHalo: { value: 0.9 },
+      glitchCerebro: { value: 0 },
+      sementeGlitch: { value: 0 }
+    },
+    vertexShader: [
+      "uniform float tamanhoHalo;",
+      "uniform float glitchCerebro;",
+      "uniform float sementeGlitch;",
+      "varying vec3 vLocal;",
+      "varying vec3 vWorld;",
+      "void main() {",
+      "  vLocal = position;",
+      "  vec4 mundo = modelMatrix * vec4(position, 1.0);",
+      "  vWorld = mundo.xyz;",
+      "  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);",
+      "  gl_Position = projectionMatrix * mvPosition;",
+      "  float faixaGlitch = step(0.9, sin((position.y + sementeGlitch) * 104.0) * 0.5 + 0.5);",
+      "  gl_Position.x += faixaGlitch * glitchCerebro * 0.008 * gl_Position.w;",
+      "  gl_PointSize = tamanhoHalo;",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform vec3 corHalo;",
+      "uniform vec3 corBorda;",
+      "uniform float opacidadeHalo;",
+      "varying vec3 vLocal;",
+      "varying vec3 vWorld;",
+      "void main() {",
+      "  vec2 centro = gl_PointCoord - vec2(0.5);",
+      "  float ponto = 1.0 - smoothstep(0.18, 0.42, length(centro));",
+      "  if (ponto <= 0.01) discard;",
+      "  vec3 normalFalsa = normalize(vLocal + vec3(0.0001));",
+      "  vec3 visao = normalize(cameraPosition - vWorld);",
+      "  float borda = pow(1.0 - abs(dot(normalFalsa, visao)), 5.8);",
+      "  float camadaFina = smoothstep(0.72, 0.98, borda);",
+      "  vec3 cor = mix(corHalo, corBorda, camadaFina * 0.48);",
+      "  float alpha = ponto * opacidadeHalo * camadaFina;",
+      "  gl_FragColor = vec4(cor * (0.92 + camadaFina * 0.74), alpha);",
+      "}"
+    ].join("\n"),
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false
+  });
+}
+
+function calcularScanlineCerebro(x, y, z) {
+  const sulco = calcularSulcoCerebro(x, y, z);
+  const curva = sulco * 18.0 + x * 4.2 - z * 3.6 + Math.sin(y * 22.0 + x * 9.0) * 0.22;
+  const faixa = Math.abs(Math.sin(curva));
+
+  return faixa;
+}
+
+function criarGeometriaScanlinesCerebro(posicoesOriginais) {
+  const posicoes = [];
+  const intensidades = [];
+  const sulcos = [];
+  const totalPontos = posicoesOriginais.length / 3;
+  const tamanhoCelula = 0.04;
+  const mapa = {};
+  const usados = {};
+
+  function chaveCelula(x, y, z) {
+    return [
+      Math.floor(x / tamanhoCelula),
+      Math.floor(y / tamanhoCelula),
+      Math.floor(z / tamanhoCelula)
+    ].join(",");
+  }
+
+  for (let i = 0; i < totalPontos; i += 1) {
+    const x = posicoesOriginais[i * 3];
+    const y = posicoesOriginais[i * 3 + 1];
+    const z = posicoesOriginais[i * 3 + 2];
+    const chave = chaveCelula(x, y, z);
+
+    if (!mapa[chave]) {
+      mapa[chave] = [];
+    }
+
+    mapa[chave].push(i);
+  }
+
+  for (let i = 0; i < totalPontos; i += 1) {
+    const x = posicoesOriginais[i * 3];
+    const y = posicoesOriginais[i * 3 + 1];
+    const z = posicoesOriginais[i * 3 + 2];
+    const scanline = calcularScanlineCerebro(x, y, z);
+    const sulco = calcularSulcoCerebro(x, y, z);
+    const acompanhaSulco = sulco > 0.44 && sulco < 0.84;
+
+    if (!acompanhaSulco || scanline > 0.16 || numeroAleatorioSimples(i + 9.4) < 0.44) {
+      continue;
+    }
+
+    const cx = Math.floor(x / tamanhoCelula);
+    const cy = Math.floor(y / tamanhoCelula);
+    const cz = Math.floor(z / tamanhoCelula);
+    let melhorIndice = -1;
+    let melhorDistancia = 0.0032;
+
+    for (let dx = -1; dx <= 1; dx += 1) {
+      for (let dy = -1; dy <= 1; dy += 1) {
+        for (let dz = -1; dz <= 1; dz += 1) {
+          const lista = mapa[[cx + dx, cy + dy, cz + dz].join(",")] || [];
+
+          lista.forEach(function (indiceVizinho) {
+            if (indiceVizinho <= i) {
+              return;
+            }
+
+            const vx = posicoesOriginais[indiceVizinho * 3];
+            const vy = posicoesOriginais[indiceVizinho * 3 + 1];
+            const vz = posicoesOriginais[indiceVizinho * 3 + 2];
+            const scanlineVizinha = calcularScanlineCerebro(vx, vy, vz);
+            const sulcoVizinho = calcularSulcoCerebro(vx, vy, vz);
+
+            if (scanlineVizinha > 0.18 || Math.abs(scanline - scanlineVizinha) > 0.1 || Math.abs(sulco - sulcoVizinho) > 0.12) {
+              return;
+            }
+
+            const direcaoLinha = Math.abs((vx - x) * 0.34 + (vy - y) * 0.18 - (vz - z) * 0.48);
+
+            if (direcaoLinha < 0.002) {
+              return;
+            }
+
+            const distancia =
+              (x - vx) * (x - vx) +
+              (y - vy) * (y - vy) +
+              (z - vz) * (z - vz);
+
+            if (distancia < melhorDistancia) {
+              melhorDistancia = distancia;
+              melhorIndice = indiceVizinho;
+            }
+          });
+        }
+      }
+    }
+
+    if (melhorIndice < 0 || usados[i + "-" + melhorIndice]) {
+      continue;
+    }
+
+    usados[i + "-" + melhorIndice] = true;
+    const vx = posicoesOriginais[melhorIndice * 3];
+    const vy = posicoesOriginais[melhorIndice * 3 + 1];
+    const vz = posicoesOriginais[melhorIndice * 3 + 2];
+    const sulcoVizinho = calcularSulcoCerebro(vx, vy, vz);
+    const intensidade = (1.0 - Math.max(scanline, calcularScanlineCerebro(vx, vy, vz))) * 0.58;
+    const forcaSulco = (sulco + sulcoVizinho) * 0.5;
+
+    posicoes.push(x, y, z, vx, vy, vz);
+    intensidades.push(intensidade, intensidade);
+    sulcos.push(forcaSulco, forcaSulco);
+  }
+
+  const geometria = new THREE.BufferGeometry();
+  geometria.setAttribute("position", new THREE.BufferAttribute(new Float32Array(posicoes), 3));
+  geometria.setAttribute("intensidade", new THREE.BufferAttribute(new Float32Array(intensidades), 1));
+  geometria.setAttribute("sulco", new THREE.BufferAttribute(new Float32Array(sulcos), 1));
+  geometria.computeBoundingSphere();
+
+  return geometria;
+}
+
+function criarMaterialScanlinesCerebro() {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      corBase: { value: new THREE.Color(0x6a5cff) },
+      corBorda: { value: new THREE.Color(0xa78bff) },
+      opacidadeScanline: { value: 0.12 },
+      glitchCerebro: { value: 0 },
+      sementeGlitch: { value: 0 }
+    },
+    vertexShader: [
+      "attribute float intensidade;",
+      "attribute float sulco;",
+      "uniform float glitchCerebro;",
+      "uniform float sementeGlitch;",
+      "varying float vIntensidade;",
+      "varying float vSulco;",
+      "void main() {",
+      "  vIntensidade = intensidade;",
+      "  vSulco = sulco;",
+      "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+      "  float faixaGlitch = step(0.9, sin((position.y + sementeGlitch) * 92.0) * 0.5 + 0.5);",
+      "  gl_Position.x += faixaGlitch * glitchCerebro * 0.006 * gl_Position.w;",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform vec3 corBase;",
+      "uniform vec3 corBorda;",
+      "uniform float opacidadeScanline;",
+      "varying float vIntensidade;",
+      "varying float vSulco;",
+      "void main() {",
+      "  vec3 cor = mix(corBase, corBorda, vIntensidade * 0.16 + vSulco * 0.08);",
+      "  gl_FragColor = vec4(cor * (0.36 + vIntensidade * 0.28), opacidadeScanline * vIntensidade);",
+      "}"
+    ].join("\n"),
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false
+  });
+}
+
+function prepararCerebroHolograma() {
+  if (!cerebroHolograma || renderizadorCerebro || !window.THREE) {
+    return;
+  }
+
+  const largura = cerebroHolograma.clientWidth || 360;
+  const altura = cerebroHolograma.clientHeight || 420;
+
+  try {
+    renderizadorCerebro = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: "high-performance"
+    });
+  } catch (erro) {
+    cerebroHolograma.dataset.status = "webgl-indisponivel";
+    console.warn("Cérebro holograma: WebGL não iniciou.", erro);
+    return;
+  }
+  renderizadorCerebro.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
+  renderizadorCerebro.setSize(largura, altura, false);
+  renderizadorCerebro.setClearColor(0x000000, 0);
+  cerebroHolograma.appendChild(renderizadorCerebro.domElement);
+  cerebroHolograma.dataset.status = "canvas-criado";
+
+  cenaCerebro = new THREE.Scene();
+  cameraCerebro = new THREE.PerspectiveCamera(34, largura / altura, 0.1, 100);
+  cameraCerebro.position.set(0, 0.04, 4.2);
+
+  const caminhoModelo = cerebroHolograma.dataset.modelo || "./assets/images/brain_point_cloud.glb";
+
+  fetch(caminhoModelo)
+    .then(function (resposta) {
+      return resposta.arrayBuffer();
+    })
+    .then(function (bufferGlb) {
+      const geometria = new THREE.BufferGeometry();
+      const dadosModelo = lerModeloGlb(bufferGlb);
+      geometria.setAttribute("position", new THREE.BufferAttribute(dadosModelo.posicoes, 3));
+      geometria.setAttribute("color", new THREE.BufferAttribute(dadosModelo.cores, 3));
+      geometria.computeBoundingSphere();
+
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          corBase: { value: new THREE.Color(0x4a3dff) },
+          corViva: { value: new THREE.Color(0x6a5cff) },
+          corBorda: { value: new THREE.Color(0xa78bff) },
+          intensidade: { value: 1.45 },
+          opacidade: { value: 0.58 },
+          tamanhoPonto: { value: 1.72 },
+          glitchCerebro: { value: 0 },
+          sementeGlitch: { value: 0 }
+        },
+        vertexShader: [
+          "attribute vec3 color;",
+          "uniform float tamanhoPonto;",
+          "uniform float glitchCerebro;",
+          "uniform float sementeGlitch;",
+          "varying vec3 vColor;",
+          "varying vec3 vLocal;",
+          "varying vec3 vWorld;",
+          "void main() {",
+          "  vColor = color;",
+          "  vLocal = position;",
+          "  vec4 mundo = modelMatrix * vec4(position, 1.0);",
+          "  vWorld = mundo.xyz;",
+          "  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);",
+          "  gl_Position = projectionMatrix * mvPosition;",
+          "  float faixaGlitch = step(0.9, sin((position.y + sementeGlitch) * 98.0) * 0.5 + 0.5);",
+          "  gl_Position.x += faixaGlitch * glitchCerebro * 0.01 * gl_Position.w;",
+          "  gl_PointSize = tamanhoPonto;",
+          "}"
+        ].join("\n"),
+        fragmentShader: [
+          "uniform vec3 corBase;",
+          "uniform vec3 corViva;",
+          "uniform vec3 corBorda;",
+          "uniform float intensidade;",
+          "uniform float opacidade;",
+          "uniform float glitchCerebro;",
+          "uniform float sementeGlitch;",
+          "varying vec3 vColor;",
+          "varying vec3 vLocal;",
+          "varying vec3 vWorld;",
+          "void main() {",
+          "  vec2 centro = gl_PointCoord - vec2(0.5);",
+          "  float distancia = length(centro);",
+          "  float ponto = smoothstep(0.5, 0.22, distancia);",
+          "  if (ponto <= 0.01) discard;",
+          "  vec3 normalFalsa = normalize(vLocal + vec3(0.0001));",
+          "  vec3 visao = normalize(cameraPosition - vWorld);",
+          "  float fresnel = pow(1.0 - abs(dot(normalFalsa, visao)), 1.45);",
+          "  float borda = smoothstep(0.16, 0.94, fresnel);",
+          "  float centroTransparente = 1.0 - smoothstep(0.1, 0.72, fresnel);",
+          "  float linhas = sin(vLocal.x * 48.0 + vLocal.y * 26.0 + vLocal.z * 38.0);",
+          "  linhas = smoothstep(0.55, 0.95, linhas * 0.5 + 0.5) * 0.18;",
+          "  float camadaEnergia = sin(length(vLocal) * 68.0 + vLocal.y * 16.0);",
+          "  camadaEnergia = smoothstep(0.62, 0.96, camadaEnergia * 0.5 + 0.5) * 0.16;",
+          "  float padraoDigital = sin(vLocal.x * 118.0 + vLocal.y * 67.0 - vLocal.z * 91.0);",
+          "  padraoDigital = smoothstep(0.38, 0.96, padraoDigital * 0.5 + 0.5);",
+          "  float interferencia = step(0.9, sin((vLocal.y + sementeGlitch) * 128.0) * 0.5 + 0.5) * glitchCerebro;",
+          "  vec3 roxo = mix(corBase, corViva, vColor.b);",
+          "  roxo = mix(roxo, corBorda, borda * 0.82 + linhas * 0.72);",
+          "  roxo.r += glitchCerebro * 0.055;",
+          "  roxo.b += glitchCerebro * 0.075;",
+          "  float alpha = ponto * opacidade * (0.2 + borda * 0.92 + linhas + camadaEnergia * (0.35 + borda * 0.65));",
+          "  alpha *= 1.0 + interferencia * 0.28;",
+          "  alpha *= 1.0 - centroTransparente * 0.68;",
+          "  float luzBorda = 0.72 + borda * 0.92 + linhas * 0.32 + camadaEnergia * 0.22;",
+          "  luzBorda *= 0.82 + padraoDigital * 0.36;",
+          "  gl_FragColor = vec4(roxo * intensidade * luzBorda, alpha);",
+          "}"
+        ].join("\n"),
+        transparent: true,
+        depthWrite: false,
+        depthTest: true,
+        blending: THREE.AdditiveBlending,
+        vertexColors: true
+      });
+
+      modeloCerebro = new THREE.Points(geometria, material);
+      modeloCerebro.frustumCulled = false;
+      modeloCerebro.renderOrder = 1;
+      modeloCerebro.scale.setScalar(1.92);
+      modeloCerebro.rotation.set(-0.08, -0.48, 0.02);
+
+      const materialHalo = criarMaterialHaloCerebro();
+      const haloCerebro = new THREE.Points(geometria, materialHalo);
+      haloCerebro.frustumCulled = false;
+      haloCerebro.renderOrder = 2;
+      modeloCerebro.add(haloCerebro);
+
+      const geometriaMicroPontos = criarGeometriaMicroPontosCerebro(dadosModelo.posicoes);
+      const materialMicroPontos = criarMaterialMicroPontosCerebro();
+      const microPontos = new THREE.Points(geometriaMicroPontos, materialMicroPontos);
+      microPontos.frustumCulled = false;
+      microPontos.renderOrder = 3;
+      modeloCerebro.add(microPontos);
+
+      const geometriaMicroLinhas = criarGeometriaMicroLinhasCerebro(dadosModelo.posicoes);
+      const materialMicroLinhas = criarMaterialMicroLinhasCerebro();
+      const microLinhas = new THREE.LineSegments(geometriaMicroLinhas, materialMicroLinhas);
+      microLinhas.frustumCulled = false;
+      microLinhas.renderOrder = 4;
+      modeloCerebro.add(microLinhas);
+
+      const geometriaInterna = criarGeometriaInternaCerebro(dadosModelo.posicoes);
+      const materialInterno = criarMaterialInternoCerebro();
+      const pontosInternos = new THREE.Points(geometriaInterna, materialInterno);
+      pontosInternos.frustumCulled = false;
+      pontosInternos.renderOrder = 5;
+      modeloCerebro.add(pontosInternos);
+
+      const geometriaSulcos = criarGeometriaSulcosCerebro(dadosModelo.posicoes);
+      const materialSulcos = criarMaterialSulcosCerebro();
+      const linhasSulcos = new THREE.LineSegments(geometriaSulcos, materialSulcos);
+      linhasSulcos.frustumCulled = false;
+      linhasSulcos.renderOrder = 6;
+      modeloCerebro.add(linhasSulcos);
+
+      const geometriaScanlines = criarGeometriaScanlinesCerebro(dadosModelo.posicoes);
+      const materialScanlines = criarMaterialScanlinesCerebro();
+      const linhasScanlines = new THREE.LineSegments(geometriaScanlines, materialScanlines);
+      linhasScanlines.frustumCulled = false;
+      linhasScanlines.renderOrder = 7;
+      modeloCerebro.add(linhasScanlines);
+
+      sortearProximoGlitchCerebro(performance.now());
+      cenaCerebro.add(modeloCerebro);
+      ajustarCerebroHolograma();
+      iniciarCerebroHolograma();
+      cerebroHolograma.dataset.status = "modelo-carregado";
+      cerebroHolograma.classList.add("cerebro-carregado");
+    })
+    .catch(function (erro) {
+      cerebroHolograma.dataset.status = "modelo-nao-carregou";
+      console.warn("Cérebro holograma: modelo GLB não carregou.", erro);
+    });
+}
+
+function ajustarCerebroHolograma() {
+  if (!cerebroHolograma || !renderizadorCerebro || !cameraCerebro) {
+    return;
+  }
+
+  const largura = cerebroHolograma.clientWidth || 360;
+  const altura = cerebroHolograma.clientHeight || 420;
+
+  renderizadorCerebro.setSize(largura, altura, false);
+
+  cameraCerebro.aspect = largura / altura;
+  cameraCerebro.updateProjectionMatrix();
+
+  if (cenaCerebro) {
+    renderizadorCerebro.render(cenaCerebro, cameraCerebro);
+  }
+}
+
+function sortearProximoGlitchCerebro(agora) {
+  proximoGlitchCerebro = agora + 8000 + Math.random() * 7000;
+}
+
+function aplicarGlitchCerebro(valor) {
+  if (!modeloCerebro) {
+    return;
+  }
+
+  modeloCerebro.position.x = valor ? Math.sin(sementeGlitchCerebro * 12.0) * 0.026 * valor : 0;
+
+  modeloCerebro.traverse(function (objeto) {
+    if (!objeto.material || !objeto.material.uniforms) {
+      return;
+    }
+
+    if (objeto.material.uniforms.glitchCerebro) {
+      objeto.material.uniforms.glitchCerebro.value = valor;
+    }
+
+    if (objeto.material.uniforms.sementeGlitch) {
+      objeto.material.uniforms.sementeGlitch.value = sementeGlitchCerebro;
+    }
+  });
+}
+
+function atualizarGlitchCerebro(agora) {
+  if (!modeloCerebro) {
+    return;
+  }
+
+  if (!proximoGlitchCerebro) {
+    sortearProximoGlitchCerebro(agora);
+  }
+
+  if (inicioGlitchCerebro < 0 && agora >= proximoGlitchCerebro) {
+    inicioGlitchCerebro = agora;
+    duracaoGlitchCerebro = 100 + Math.random() * 50;
+    sementeGlitchCerebro = Math.random() * 10;
+  }
+
+  if (inicioGlitchCerebro >= 0) {
+    const progresso = (agora - inicioGlitchCerebro) / duracaoGlitchCerebro;
+
+    if (progresso >= 1) {
+      inicioGlitchCerebro = -1;
+      aplicarGlitchCerebro(0);
+      sortearProximoGlitchCerebro(agora);
+      return;
+    }
+
+    aplicarGlitchCerebro(Math.sin(progresso * Math.PI));
+    return;
+  }
+
+  aplicarGlitchCerebro(0);
+}
+
+function desenharCerebroHolograma() {
+  if (!renderizadorCerebro || !cenaCerebro || !cameraCerebro) {
+    animacaoCerebro = null;
+    return;
+  }
+
+  const agora = performance.now();
+  const delta = Math.min((agora - tempoAnteriorCerebro) / 1000, 0.05);
+  tempoAnteriorCerebro = agora;
+
+  if (modeloCerebro) {
+    atualizarGlitchCerebro(agora);
+    modeloCerebro.rotation.y += delta * 0.48;
+    modeloCerebro.rotation.x = -0.08 + Math.sin(agora * 0.0007) * 0.045;
+    modeloCerebro.rotation.z = Math.sin(agora * 0.0005) * 0.018;
+  }
+
+  renderizadorCerebro.render(cenaCerebro, cameraCerebro);
+
+  animacaoCerebro = requestAnimationFrame(desenharCerebroHolograma);
+}
+
+function iniciarCerebroHolograma() {
+  if (!renderizadorCerebro || animacaoCerebro) {
+    return;
+  }
+
+  inicioGlitchCerebro = -1;
+  sortearProximoGlitchCerebro(performance.now());
+  tempoAnteriorCerebro = performance.now();
+  animacaoCerebro = requestAnimationFrame(desenharCerebroHolograma);
+}
+
+function pararCerebroHolograma() {
+  if (!animacaoCerebro) {
+    return;
+  }
+
+  cancelAnimationFrame(animacaoCerebro);
+  animacaoCerebro = null;
 }
 
 function pegarTextoTerminal() {
@@ -1523,6 +2790,24 @@ function carregarMiniGame() {
   if (miniGamePlaceholder) {
     miniGamePlaceholder.hidden = true;
   }
+
+  enviarEstadoAudioGame();
+}
+
+function enviarEstadoAudioGame() {
+  if (!iframeMiniGame || !iframeMiniGame.contentWindow) {
+    return;
+  }
+
+  iframeMiniGame.contentWindow.postMessage({
+    tipo: "portfolio-game-visivel",
+    ativo: gameProjetosVisivel
+  }, "*");
+}
+
+function controlarAudioGameProjetos(ativo) {
+  gameProjetosVisivel = !!ativo;
+  enviarEstadoAudioGame();
 }
 
 function prepararCarregamentoGame() {
@@ -1553,6 +2838,14 @@ function prepararCarregamentoGame() {
   });
 
   observadorGame.observe(secaoProjetos);
+
+  const observadorAudioGame = new IntersectionObserver(function (entradas) {
+    controlarAudioGameProjetos(entradas[0].isIntersecting);
+  }, {
+    threshold: 0.55
+  });
+
+  observadorAudioGame.observe(secaoProjetos);
 }
 
 function moverOlhos(evento) {
@@ -1650,6 +2943,7 @@ if (iframeMiniGame) {
   iframeMiniGame.addEventListener("load", function () {
     ajustarEscalaGame();
     manterCursorGameNoCard();
+    enviarEstadoAudioGame();
   });
 }
 
@@ -1676,15 +2970,18 @@ document.addEventListener("keydown", function (evento) {
 window.addEventListener("resize", prepararMenu);
 window.addEventListener("resize", prepararFundoCodigo);
 window.addEventListener("resize", ajustarEscalaGame);
+window.addEventListener("resize", ajustarCerebroHolograma);
 document.addEventListener("visibilitychange", function () {
   if (document.hidden) {
     pararCodigo();
     pararSilhueta();
     pararHologramaEsquerda();
+    pararCerebroHolograma();
   } else {
     iniciarCodigo();
     iniciarSilhueta();
     iniciarHologramaEsquerda();
+    iniciarCerebroHolograma();
   }
 });
 
@@ -1720,7 +3017,9 @@ criarMapaProjetos();
 prepararMenu();
 prepararSilhueta();
 prepararHologramaEsquerda();
+prepararCerebroHolograma();
 criarFundoCodigo();
 iniciarCodigo();
 iniciarSilhueta();
 iniciarHologramaEsquerda();
+iniciarCerebroHolograma();

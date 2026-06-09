@@ -1,61 +1,78 @@
 # Portfólio Lucas Junio
 
-Página estática criada para apresentar minha trajetória, tecnologias, projetos em desenvolvimento e formas de contato.
+Portfólio pessoal desenvolvido para apresentar minha trajetória, tecnologias, formação, projetos em desenvolvimento e formas de contato.
+
+O projeto tem uma identidade visual escura e holográfica, com animações, elementos interativos, uma seção de tecnologias em estilo terminal e uma área de projetos apresentada como experiência visual/game.
 
 ## Objetivo
 
-O objetivo deste projeto é construir meu primeiro portfólio pessoal no GitHub, praticando HTML, CSS, JavaScript, responsividade e organização de código.
+Criar uma página de portfólio para reunir informações profissionais e acadêmicas em um único lugar, praticando estrutura HTML, estilos em CSS, interações com JavaScript e organização de arquivos para publicação no GitHub.
 
 ## Tecnologias usadas
 
 - HTML5
 - CSS3
 - JavaScript
+- Three.js
 - Git
 - GitHub
 
-## Funcionalidades
+## O que o projeto contém
 
-- Layout responsivo
-- Menu lateral no desktop
-- Menu sanduíche no celular
-- Seções em formato de cards
-- Scroll suave entre os tópicos
-- Animações simples de entrada
-- Área de tecnologias
-- Área de projetos
-- Espaço preparado para mini-game de projetos
-- Mini-game exibido em área proporcional 16:9
-- Área de formação
-- Área de contato
+- Página principal com seções de início, sobre, tecnologias, projetos, formação e contato
+- Menu de navegação para acessar os tópicos do portfólio
+- Visual escuro com efeitos holográficos
+- Animações e elementos interativos com JavaScript
+- Seção de tecnologias em formato de terminal
+- Área de projetos com mini-game/experiência visual
+- Preview visual de cérebro holográfico
+- Layout pensado para desktop e mobile
+
+## Estrutura principal
+
+```txt
+portfolio-lucas-junio/
+|-- index.html
+|-- README.md
+|-- preview-cerebro.html
+|-- package.json
+|
+|-- assets/
+|   |-- images/
+|
+|-- src/
+|   |-- css/
+|   |-- js/
+|   |-- components/
+|   |-- preview-cerebro/
+|
+|-- game/
+```
+
+## Como abrir
+
+Para visualizar a página principal, abra o arquivo `index.html` no navegador.
+
+Se quiser rodar a prévia do cérebro holográfico em ambiente de desenvolvimento, instale as dependências e use o script:
+
+```bash
+npm install
+npm run preview:cerebro
+```
 
 ## Status
 
-Versão inicial em desenvolvimento.
+Projeto em desenvolvimento.
 
-## Como abrir o projeto
-
-Clone o repositório:
-
-```bash
-git clone https://github.com/lucasteixeira31/portfolio-lucas-junio.git
-```
-
-Entre na pasta do projeto:
-
-```bash
-cd portfolio-lucas-junio
-```
-
-Depois, abra o arquivo `index.html` no navegador.
+Ainda estou ajustando responsividade, organização dos arquivos e melhorias visuais para deixar o portfólio mais completo e consistente.
 
 ## Próximos passos
 
-- Ajustar detalhes visuais
-- Adicionar novos projetos conforme forem sendo criados
+- Melhorar a responsividade em telas menores
+- Revisar a organização dos arquivos públicos
+- Ajustar detalhes do menu e das seções
 - Publicar no GitHub Pages
-- Melhorar a seção de contato
-- Adicionar link do LinkedIn futuramente
+- Adicionar novos projetos conforme forem sendo desenvolvidos
 
 ## Autor
 

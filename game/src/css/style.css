@@ -1,0 +1,577 @@
+html,
+		body {
+            --aumento-texto-game: 1;
+            width: 100%;
+            height: 100%;
+			margin: 0;
+			padding: 0;
+			background-color: #000000;
+            overflow: hidden;
+            position: fixed;
+            inset: 0;
+		}
+        img,
+        canvas,
+        svg {
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+        html,
+        body,
+        body *,
+        canvas,
+        #canvasArea,
+        #canvasArea *,
+        #telaInicialGame,
+        #telaInicialGame *,
+        .project-modal-overlay,
+        .project-modal,
+        .project-modal * {
+            cursor: url("../../assets/icons/cursor-game.png") 19 5, auto !important;
+        }
+        #controleSom,
+        .som-controle,
+        .som-controle *,
+        .start-inicio.is-ready,
+        .conversa-inicial-acao.is-visible,
+        .project-modal-close,
+        .project-modal-link:not(.is-disabled),
+        .project-modal-equipment-more.is-clickable,
+        a[href]:not(.project-modal-link.is-disabled) {
+            cursor: url("../../assets/icons/pointer-game.png") 20 4, pointer !important;
+        }
+        .loading-caixa,
+        .loading-caixa .loading-conteudo,
+        .loading-caixa .loading-inicial,
+        .loading-caixa .loading-brilho,
+        .loading-caixa .titulo-projetos-inicio,
+        .start-inicio:not(.is-ready) {
+            pointer-events: none !important;
+            cursor: url("../../assets/icons/cursor-game.png") 19 5, auto !important;
+        }
+        .project-modal-link.is-disabled,
+        .project-modal-link.has-tooltip {
+            cursor: url("../../assets/icons/cursor-game.png") 19 5, auto !important;
+        }
+        .conversa-inicial-overlay,
+        .conversa-inicial-overlay * {
+            cursor: url("../../assets/icons/cursor-game.png") 19 5, auto !important;
+        }
+        .som-controle,
+        .som-controle * {
+            cursor: url("../../assets/icons/pointer-game.png") 20 4, pointer !important;
+        }
+        #watermark,
+        #watermark-link,
+        #watermark-background {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        #canvasArea {
+            margin-left: auto;
+            margin-right: auto;
+            overflow: hidden;
+        }
+        canvas {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            display: block !important;
+        }
+        .som-controle {
+            all: unset;
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 10050;
+            width: 68px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            image-rendering: pixelated;
+            pointer-events: auto;
+        }
+        body.modal-fase-aberto .som-controle {
+            display: none !important;
+            pointer-events: none !important;
+        }
+        .som-controle-img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        #telaInicialGame {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000000;
+            background-image: url("../../assets/images/gdevelop/tela-inicial-game.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            cursor: url("../../assets/icons/cursor-game.png") 19 5, auto !important;
+            image-rendering: pixelated;
+        }
+        .conversa-inicial-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0 0 10px;
+            box-sizing: border-box;
+            pointer-events: auto;
+        }
+        .conversa-inicial-overlay.is-visible {
+            display: flex;
+        }
+        .conversa-inicial-overlay.is-entering .conversa-inicial-caixa {
+            animation: subirConversaInicial 0.42s steps(6, end) forwards;
+        }
+        .conversa-inicial-overlay::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(9, 4, 18, 0.22);
+            pointer-events: none;
+        }
+        .conversa-inicial-caixa {
+            position: relative;
+            z-index: 1;
+            width: 86vw;
+            max-width: none;
+            height: auto;
+            max-height: 34vh;
+            transform: translateY(0);
+            image-rendering: pixelated;
+            filter: drop-shadow(0 6px 0 rgba(4, 2, 10, 0.45));
+        }
+        .conversa-inicial-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 34vh;
+            object-fit: contain;
+            image-rendering: pixelated;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .conversa-inicial-texto {
+            position: absolute;
+            left: 44%;
+            top: 29%;
+            width: 46%;
+            height: 42%;
+            color: #f4edf9;
+            font-family: "Press Start 2P", "Courier New", monospace;
+            font-size: calc(clamp(8px, 1.05vw, 14px) * var(--aumento-texto-game, 1));
+            line-height: 1.35;
+            letter-spacing: 0;
+            text-shadow:
+                2px 2px 0 #050309,
+                -1px 0 0 #2b164c,
+                0 1px 0 #2b164c;
+            white-space: pre;
+            overflow-wrap: normal;
+            word-break: normal;
+            text-align: left;
+            text-indent: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .conversa-inicial-cursor {
+            display: inline-block;
+            margin-left: 2px;
+            color: #f7dc7d;
+            animation: piscarCursorConversa 0.58s steps(1, end) infinite;
+            transform: translateY(0.18em);
+        }
+        .conversa-inicial-acao {
+            position: absolute;
+            top: 66%;
+            z-index: 2;
+            display: none;
+            width: auto;
+            min-width: 0;
+            height: auto;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #f7dc7d;
+            font-family: "Press Start 2P", "Courier New", monospace;
+            font-size: calc(clamp(8px, 1.05vw, 14px) * var(--aumento-texto-game, 1));
+            line-height: 1;
+            letter-spacing: 0;
+            vertical-align: top;
+            text-align: left;
+            text-transform: none;
+            white-space: nowrap;
+            overflow: visible;
+            text-shadow:
+                2px 2px 0 #050309,
+                -1px 0 0 #2b164c,
+                0 1px 0 #2b164c;
+            pointer-events: none;
+            cursor: url("../../assets/icons/cursor-game.png") 19 5, auto !important;
+        }
+        .conversa-inicial-acao.is-visible {
+            display: inline-block;
+            pointer-events: auto;
+            cursor: url("../../assets/icons/pointer-game.png") 20 4, pointer !important;
+        }
+        .conversa-inicial-next {
+            left: 58%;
+        }
+        .conversa-inicial-go {
+            left: 61%;
+        }
+        @keyframes piscarCursorConversa {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+        @keyframes subirConversaInicial {
+            from {
+                transform: translateY(120%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        .fumaca-chamine {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 440px;
+            height: 310px;
+            z-index: 1;
+            image-rendering: pixelated;
+            pointer-events: none;
+        }
+        .casa-luzes {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1672px;
+            height: 941px;
+            z-index: 2;
+            image-rendering: pixelated;
+            pointer-events: none;
+        }
+        .casa-luz-frame {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            opacity: 0;
+            image-rendering: pixelated;
+            pointer-events: none;
+            animation: casaLuzVelaFrames 1s steps(1, end) infinite;
+        }
+        .casa-luz-frame-1 {
+            animation-delay: 0s;
+        }
+        .casa-luz-frame-2 {
+            animation-delay: 0.25s;
+        }
+        .casa-luz-frame-3 {
+            animation-delay: 0.5s;
+        }
+        .casa-luz-frame-4 {
+            animation-delay: 0.75s;
+        }
+        .fumaca-frame {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            opacity: 0;
+            mix-blend-mode: normal;
+            filter: none;
+            image-rendering: pixelated;
+            pointer-events: none;
+            animation: fumacaChamineFrames 1.25s steps(1, end) infinite;
+        }
+        .fumaca-frame-1 {
+            animation-delay: 0s;
+        }
+        .fumaca-frame-2 {
+            animation-delay: 0.25s;
+        }
+        .fumaca-frame-3 {
+            animation-delay: 0.5s;
+        }
+        .fumaca-frame-4 {
+            animation-delay: 0.75s;
+        }
+        .fumaca-frame-5 {
+            animation-delay: 1s;
+        }
+        .loading-caixa {
+            position: relative;
+            width: min(360px, 42vw);
+            transform: translateY(-170px);
+            z-index: 3;
+        }
+        .loading-caixa,
+        .loading-conteudo,
+        .loading-inicial {
+            cursor: url("../../assets/icons/cursor-game.png") 19 5, auto !important;
+        }
+        .loading-conteudo {
+            position: relative;
+            width: 100%;
+            animation: sumirLoading 0.45s 1.55s 1 forwards;
+            pointer-events: none;
+        }
+        .loading-inicial {
+            display: block;
+            width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+            pointer-events: none;
+        }
+        .loading-brilho {
+            position: absolute;
+            left: calc(27.8% + (var(--posicao) * 5.55%));
+            top: 64.7%;
+            width: 4.8%;
+            height: 4.4%;
+            background: rgba(216, 96, 255, 0);
+            box-shadow: none;
+            animation: brilhoLoading 0.22s 1 forwards;
+            animation-delay: calc(var(--posicao) * 0.18s);
+            image-rendering: pixelated;
+            pointer-events: none;
+        }
+        @keyframes brilhoLoading {
+            0% {
+                background: rgba(216, 96, 255, 0);
+                box-shadow: none;
+            }
+            100% {
+                background: rgba(236, 152, 255, 0.82);
+                box-shadow: 0 0 10px rgba(202, 75, 255, 0.95);
+            }
+        }
+        .titulo-projetos-inicio {
+            position: absolute;
+            left: 50%;
+            top: 18%;
+            width: min(720px, 176%);
+            height: auto;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            filter: drop-shadow(0 0 5px rgba(84, 28, 142, 0.35));
+            animation: aparecerProjetosInicio 0.65s 1.72s 1 forwards;
+            image-rendering: pixelated;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .start-inicio {
+            position: absolute;
+            left: 50%;
+            top: 88%;
+            width: min(470px, 124%);
+            height: auto;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            filter: contrast(1.02) brightness(0.86) saturate(0.96) drop-shadow(0 0 2px rgba(145, 70, 214, 0.22));
+            animation: aparecerStartInicio 0.65s 1.72s 1 forwards, piscarStartInicio 1.35s 2.75s infinite;
+            image-rendering: pixelated;
+            cursor: url("../../assets/icons/cursor-game.png") 19 5, auto !important;
+            pointer-events: none;
+        }
+        .start-inicio.is-ready {
+            cursor: url("../../assets/icons/pointer-game.png") 20 4, pointer !important;
+            pointer-events: auto;
+        }
+        .personagem-inicio {
+            position: absolute;
+            left: 19.6%;
+            top: 75.8%;
+            width: min(150px, 11vw);
+            aspect-ratio: 1600 / 1254;
+            opacity: 0;
+            transform: translate(-50%, -100%);
+            animation: aparecerPersonagemInicio 0.72s 1.72s 1 forwards;
+            image-rendering: pixelated;
+            pointer-events: none;
+            z-index: 3;
+        }
+        .personagem-inicio img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+        }
+        .personagem-inicio-frame-1 {
+            animation: personagemParado1 0.34s steps(1) infinite;
+        }
+        .personagem-inicio-frame-2 {
+            animation: personagemParado2 0.34s steps(1) infinite;
+        }
+        .personagem-inicio-direita-1,
+        .personagem-inicio-direita-2 {
+            opacity: 0;
+        }
+        .personagem-inicio.andando {
+            opacity: 1;
+            animation: andarPersonagemInicio 2.2s linear 1 forwards;
+        }
+        .personagem-inicio.andando .personagem-inicio-frame-1,
+        .personagem-inicio.andando .personagem-inicio-frame-2 {
+            opacity: 0;
+            animation: none;
+        }
+        .personagem-inicio.andando .personagem-inicio-direita-1 {
+            animation: personagemDireita1 0.18s steps(1) infinite;
+        }
+        .personagem-inicio.andando .personagem-inicio-direita-2 {
+            animation: personagemDireita2 0.18s steps(1) infinite;
+        }
+        .inicio-andando .start-inicio {
+            animation: sumirStartInicio 1.25s ease-out 1 forwards;
+            pointer-events: none;
+        }
+        .inicio-andando .titulo-projetos-inicio {
+            opacity: 1;
+            animation: none;
+        }
+        @keyframes personagemParado1 {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+        @keyframes personagemParado2 {
+            0%, 49% {
+                opacity: 0;
+            }
+            50%, 100% {
+                opacity: 1;
+            }
+        }
+        @keyframes personagemDireita1 {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+        @keyframes personagemDireita2 {
+            0%, 49% {
+                opacity: 0;
+            }
+            50%, 100% {
+                opacity: 1;
+            }
+        }
+        @keyframes andarPersonagemInicio {
+            from {
+                left: 19.6%;
+            }
+            to {
+                left: 108%;
+            }
+        }
+        @keyframes sumirLoading {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        @keyframes aparecerStartInicio {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes aparecerProjetosInicio {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes piscarStartInicio {
+            0%, 28%, 100% {
+                opacity: 0.9;
+                filter: contrast(1.04) brightness(0.9) saturate(0.98) drop-shadow(0 0 3px rgba(145, 70, 214, 0.28));
+            }
+            64% {
+                opacity: 0.76;
+                filter: contrast(0.98) brightness(0.78) saturate(0.94) drop-shadow(0 0 1px rgba(100, 44, 170, 0.18));
+            }
+        }
+        @keyframes sumirStartInicio {
+            from {
+                opacity: 0.9;
+                filter: contrast(1.04) brightness(0.9) saturate(0.98) drop-shadow(0 0 3px rgba(145, 70, 214, 0.28));
+            }
+            to {
+                opacity: 0;
+                filter: contrast(0.92) brightness(0.68) saturate(0.88) drop-shadow(0 0 0 rgba(145, 70, 214, 0));
+            }
+        }
+        @keyframes aparecerPersonagemInicio {
+            0%, 18%, 36%, 54%, 72% {
+                opacity: 0;
+            }
+            9%, 27%, 45%, 63%, 100% {
+                opacity: 1;
+            }
+        }
+        @keyframes casaLuzVelaFrames {
+            0%, 24.99% {
+                opacity: 1;
+            }
+            25%, 100% {
+                opacity: 0;
+            }
+        }
+        @keyframes fumacaChamineFrames {
+            0%, 19.99% {
+                opacity: 1;
+            }
+            20%, 100% {
+                opacity: 0;
+            }
+        }
