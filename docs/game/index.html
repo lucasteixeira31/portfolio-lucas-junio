@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="manifest" href="manifest.webmanifest">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="theme-color" content="#000000" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <link rel="stylesheet" href="src/css/style.css">
+    <!-- Libs and GDJS core files : -->
+		<script src="libs/jshashtable.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/logger.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gd.js" crossorigin="anonymous"></script>
+	<script src="libs/rbush.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/AsyncTasksManager.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/inputmanager.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/jsonmanager.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/Model3DManager.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/ResourceLoader.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/ResourceCache.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/timemanager.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/polygon.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/runtimeobject.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/profiler.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/RuntimeInstanceContainer.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/runtimescene.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/scenestack.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/force.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/RuntimeLayer.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/layer.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/RuntimeCustomObjectLayer.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/timer.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/runtimewatermark.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/runtimegame.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/variable.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/variablescontainer.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/oncetriggers.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/runtimebehavior.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/SpriteAnimator.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/spriteruntimeobject.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/affinetransformation.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/CustomRuntimeObjectInstanceContainer.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/CustomRuntimeObject.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/CustomRuntimeObject2D.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/indexeddb.js" crossorigin="anonymous"></script>
+	<script src="events-tools/commontools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/variabletools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/runtimescenetools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/inputtools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/objecttools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/cameratools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/soundtools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/storagetools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/stringtools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/windowtools.js" crossorigin="anonymous"></script>
+	<script src="events-tools/networktools.js" crossorigin="anonymous"></script>
+	<script src="splash/gd-logo-light.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/pixi.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/pixi-filters-tools.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/runtimegame-pixi-renderer.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/runtimescene-pixi-renderer.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/layer-pixi-renderer.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/pixi-image-manager.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/pixi-bitmapfont-manager.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/spriteruntimeobject-pixi-renderer.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/CustomRuntimeObject2DPixiRenderer.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/DebuggerPixiRenderer.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/loadingscreen-pixi-renderer.js" crossorigin="anonymous"></script>
+	<script src="pixi-renderers/pixi-effects-manager.js" crossorigin="anonymous"></script>
+	<script src="howler-sound-manager/howler.min.js" crossorigin="anonymous"></script>
+	<script src="howler-sound-manager/howler-sound-manager.js" crossorigin="anonymous"></script>
+	<script src="fontfaceobserver-font-manager/fontfaceobserver.js" crossorigin="anonymous"></script>
+	<script src="fontfaceobserver-font-manager/fontfaceobserver-font-manager.js" crossorigin="anonymous"></script>
+	<script src="Extensions/DebuggerTools/debuggertools.js" crossorigin="anonymous"></script>
+	<script src="Extensions/LinkedObjects/linkedobjects.js" crossorigin="anonymous"></script>
+	<script src="Extensions/PathfindingBehavior/PathTools.js" crossorigin="anonymous"></script>
+	<script src="Extensions/PathfindingBehavior/pathfindingobstacleruntimebehavior.js" crossorigin="anonymous"></script>
+	<script src="Extensions/PathfindingBehavior/pathfindingruntimebehavior.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__cursortype__changecursortype-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__cursortype__cursorhover.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__cursortype__dochangecursortype-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__cursortype__onscenepreevents-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__linktools__canreach-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__linktools__canreachwithmaxlength-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__linktools__canreachwithmaxweight-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__linktools__costsum-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__linktools__linkhexagonalneighbors-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__linktools__linkisometricrectangularneighbors-func.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__linktools__linkpathfinding.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/gdjs-evtsext__linktools__linkrectangularneighbors-func.js" crossorigin="anonymous"></script>
+	<script src="object-capabilities/AnimatableBehavior.js" crossorigin="anonymous"></script>
+	<script src="object-capabilities/EffectBehavior.js" crossorigin="anonymous"></script>
+	<script src="object-capabilities/FlippableBehavior.js" crossorigin="anonymous"></script>
+	<script src="object-capabilities/OpacityBehavior.js" crossorigin="anonymous"></script>
+	<script src="object-capabilities/ResizableBehavior.js" crossorigin="anonymous"></script>
+	<script src="object-capabilities/ScalableBehavior.js" crossorigin="anonymous"></script>
+	<script src="Extensions/3D/DirectionalLight.js" crossorigin="anonymous"></script>
+	<script src="Extensions/3D/HemisphereLight.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/code0.js" crossorigin="anonymous"></script>
+	<script src="src/js/gdevelop/data.js" crossorigin="anonymous"></script>
+	<script src="src/js/navigation-fix.js" crossorigin="anonymous"></script>
+	<script src="src/js/project-modal.js" crossorigin="anonymous"></script>
+	<script src="src/js/cursor-flutuante.js" crossorigin="anonymous"></script>
+
+
+</head>
+<body>
+
+    <button id="controleSom" class="som-controle" type="button" aria-label="Desligar música de fundo">
+        <img id="controleSomImagem" class="som-controle-img" src="assets/icons/som-on.png" alt="">
+    </button>
+
+    <div id="telaInicialGame">
+        <div class="casa-luzes" aria-hidden="true">
+            <img class="casa-luz-frame casa-luz-frame-1 janela-baixo-luz" src="assets/efeitos/casa-janela-baixo-frame1.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-2 janela-baixo-luz" src="assets/efeitos/casa-janela-baixo-frame2.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-3 janela-baixo-luz" src="assets/efeitos/casa-janela-baixo-frame3.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-4 janela-baixo-luz" src="assets/efeitos/casa-janela-baixo-frame4.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-1 janela-cima-luz" src="assets/efeitos/casa-janela-cima-frame1.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-2 janela-cima-luz" src="assets/efeitos/casa-janela-cima-frame2.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-3 janela-cima-luz" src="assets/efeitos/casa-janela-cima-frame3.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-4 janela-cima-luz" src="assets/efeitos/casa-janela-cima-frame4.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-1 lampiao-luz" src="assets/efeitos/casa-lampiao-frame1.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-2 lampiao-luz" src="assets/efeitos/casa-lampiao-frame2.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-3 lampiao-luz" src="assets/efeitos/casa-lampiao-frame3.png" alt="">
+            <img class="casa-luz-frame casa-luz-frame-4 lampiao-luz" src="assets/efeitos/casa-lampiao-frame4.png" alt="">
+        </div>
+        <div class="fumaca-chamine" aria-hidden="true">
+            <img class="fumaca-frame fumaca-frame-1" src="assets/sprites/efeitos/sombra-fumaça5.png" alt="">
+            <img class="fumaca-frame fumaca-frame-2" src="assets/sprites/efeitos/sombra-fumaça4.png" alt="">
+            <img class="fumaca-frame fumaca-frame-3" src="assets/sprites/efeitos/sombra-fumaça3.png" alt="">
+            <img class="fumaca-frame fumaca-frame-4" src="assets/sprites/efeitos/sombra-fumaça2.png" alt="">
+            <img class="fumaca-frame fumaca-frame-5" src="assets/sprites/efeitos/sombra-fumaça1.png" alt="">
+        </div>
+        <div class="loading-caixa">
+            <div class="loading-conteudo">
+                <img class="loading-inicial" src="assets/images/loading.png" alt="">
+                <span class="loading-brilho" style="--posicao: 0"></span>
+                <span class="loading-brilho" style="--posicao: 1"></span>
+                <span class="loading-brilho" style="--posicao: 2"></span>
+                <span class="loading-brilho" style="--posicao: 3"></span>
+                <span class="loading-brilho" style="--posicao: 4"></span>
+                <span class="loading-brilho" style="--posicao: 5"></span>
+                <span class="loading-brilho" style="--posicao: 6"></span>
+                <span class="loading-brilho" style="--posicao: 7"></span>
+            </div>
+            <img class="titulo-projetos-inicio" src="assets/images/projetos.png" alt="Projetos">
+            <img class="start-inicio" src="assets/images/start-inicio.png" alt="Iniciar jogo">
+        </div>
+        <div class="personagem-inicio">
+            <img class="personagem-inicio-frame-1" src="assets/images/gdevelop/30743007aa69953b79e12433a17ba14ee7fa5206fb08b910950dc6be59dcf6fc-f7e1a86c-c593-4cd3-88b3-43d0e6abf373 (1).png.png" alt="">
+            <img class="personagem-inicio-frame-2" src="assets/images/gdevelop/ce5518f3f2b3e14e06774ee153decbc7ddff3c92db7b11612d6b89e55f2a5c30-cfe8a72f-e864-4b78-b53f-dc6ffc5d96e1 (1).png.png" alt="">
+            <img class="personagem-inicio-direita-1" src="assets/images/gdevelop/85dd33a9993759c42aaf306fea13db61e4d554742abd58edb7d8dadb5c98cb97-697d8d8d-90b5-436f-8a3b-4cfe39339373 (1).png" alt="">
+            <img class="personagem-inicio-direita-2" src="assets/images/gdevelop/3788771d7992c7d5d79a807f3139d8dbb26634182d3d0df305bb44bc1c616d8d-f4b0d6a0-85fe-49ee-b854-5bbb7874684e (1).png" alt="">
+        </div>
+    </div>
+    <div id="conversaInicialOverlay" class="conversa-inicial-overlay" aria-hidden="true">
+        <div class="conversa-inicial-caixa">
+            <img class="conversa-inicial-img" src="assets/images/conversa.png" alt="">
+            <div class="conversa-inicial-texto" aria-live="polite"><span id="conversaInicialTexto"></span><span class="conversa-inicial-cursor" aria-hidden="true">_</span></div>
+            <span id="conversaInicialNext" class="conversa-inicial-acao conversa-inicial-next" role="button" tabindex="0">Next...</span>
+            <span id="conversaInicialGo" class="conversa-inicial-acao conversa-inicial-go" role="button" tabindex="0">GO.</span>
+        </div>
+    </div>
+    
+	<script>
+
+    (function() {
+        var cursorGameImg = null;
+        var cursorGameEstilo = null;
+        var cursorEventosAtivos = false;
+        var cursorNormal = "assets/icons/cursor-game.png";
+        var cursorPointer = "assets/icons/pointer-game.png";
+
+        function alvoComPointer(alvo) {
+            return alvo &&
+                typeof alvo.closest === "function" &&
+                alvo.closest("#controleSom, .som-controle, .start-inicio.is-ready, .conversa-inicial-acao.is-visible, .project-modal-close, .project-modal-link:not(.is-disabled), .project-modal-equipment-more.is-clickable, a[href]:not(.is-disabled), button:not(:disabled), [role='button']");
+        }
+
+        function moverCursorGame(event) {
+            if (!cursorGameImg) {
+                return;
+            }
+
+            cursorGameImg.src = alvoComPointer(event.target) ? cursorPointer : cursorNormal;
+            cursorGameImg.style.display = "block";
+            cursorGameImg.style.left = event.clientX + "px";
+            cursorGameImg.style.top = event.clientY + "px";
+        }
+
+        function esconderCursorGame() {
+            if (cursorGameImg) {
+                cursorGameImg.style.display = "none";
+            }
+        }
+
+        window.iniciarCursorFlutuante = function(opcoes) {
+            if (opcoes && opcoes.urlGame) {
+                cursorNormal = opcoes.urlGame;
+            }
+
+            if (opcoes && opcoes.urlPointer) {
+                cursorPointer = opcoes.urlPointer;
+            }
+
+            if (!cursorGameEstilo) {
+                cursorGameEstilo = document.createElement("style");
+                cursorGameEstilo.textContent =
+                    "html, body, body *, canvas, #canvasArea, #canvasArea *, #telaInicialGame, #telaInicialGame * { cursor: none !important; }" +
+                    "#cursorGameImg { position: fixed; left: 0; top: 0; width: 64px; height: 64px; z-index: 2147483647; pointer-events: none; display: none; transform: translate(-19px, -5px); image-rendering: pixelated; }";
+                document.head.appendChild(cursorGameEstilo);
+            }
+
+            if (!cursorGameImg) {
+                cursorGameImg = document.createElement("img");
+                cursorGameImg.id = "cursorGameImg";
+                cursorGameImg.src = cursorNormal;
+                cursorGameImg.alt = "";
+                cursorGameImg.setAttribute("aria-hidden", "true");
+                document.body.appendChild(cursorGameImg);
+            }
+
+            if (!cursorEventosAtivos) {
+                cursorEventosAtivos = true;
+                document.addEventListener("mousemove", moverCursorGame, true);
+                document.addEventListener("mousedown", moverCursorGame, true);
+                document.addEventListener("mouseenter", moverCursorGame, true);
+                document.addEventListener("mouseleave", esconderCursorGame, true);
+            }
+        };
+
+        window.iniciarCursorFlutuante();
+    })();
+
+    (function() {
+        var telaInicialGame = document.getElementById("telaInicialGame");
+        var controleSom = document.getElementById("controleSom");
+        var controleSomImagem = document.getElementById("controleSomImagem");
+        var botaoStartInicio = document.querySelector(".start-inicio");
+        var personagemInicio = document.querySelector(".personagem-inicio");
+        var fumacaChamine = document.querySelector(".fumaca-chamine");
+        var luzesCasa = document.querySelector(".casa-luzes");
+        var conversaInicialOverlay = document.getElementById("conversaInicialOverlay");
+        var conversaInicialTexto = document.getElementById("conversaInicialTexto");
+        var conversaInicialNext = document.getElementById("conversaInicialNext");
+        var conversaInicialGo = document.getElementById("conversaInicialGo");
+        var jogoPronto = false;
+        var jogoIniciado = false;
+        var iniciarQuandoPronto = false;
+        var introTerminada = false;
+        var conversaInicialAberta = false;
+        var conversaInicialTimer = null;
+        var conversaDigitacaoTimer = null;
+        var conversaDigitacaoAudio = new Audio("assets/audio/digitando.mp3");
+        conversaDigitacaoAudio.loop = true;
+        conversaDigitacaoAudio.volume = 0.45;
+        var musicaFundoAudio = new Audio("assets/audio/musica de fundo.mp3");
+        musicaFundoAudio.loop = false;
+        musicaFundoAudio.preload = "auto";
+        musicaFundoAudio.volume = 0.08;
+        var musicaFundoLoopInicio = 0.05;
+        var musicaFundoLoopAntesDoFinal = 0.35;
+        var musicaFundoPendente = false;
+        var musicaFundoCarregamentoConcluido = false;
+        var musicaFundoLoadingVisualConcluido = false;
+        var musicaFundoLigada = true;
+        var musicaFundoPermitidaNoCard = window.parent === window;
+        var conversaEtapaAtual = 0;
+        var conversaTextos = [
+            "Explore meu portfólio como um jogo:\ncada fase revela um projeto,\nsuas tecnologias e meus desafios.",
+            "Use WASD ou clique nas fases\npara se mover. Aperte espaço\nsobre uma fase para ver as\ninformações do projeto."
+        ];
+        conversaTextos = conversaTextos.map(function(texto) {
+            return texto.replace(/^\s+|\n\s+/g, function(espaco) {
+                return espaco.indexOf("\n") === 0 ? "\n" : "";
+            });
+        });
+        var conversaTextoCompleto = conversaTextos[0];
+        conversaTextoCompleto = conversaTextoCompleto.replace(/^\s+|\n\s+/g, function(espaco) {
+            return espaco.indexOf("\n") === 0 ? "\n" : "";
+        });
+        var iniciarJogoPendente = null;
+
+        function reiniciarMusicaFundoSemFinal() {
+            if (!musicaFundoAudio || musicaFundoAudio.paused || !musicaFundoLigada) {
+                return;
+            }
+
+            if (!Number.isFinite(musicaFundoAudio.duration) || musicaFundoAudio.duration <= musicaFundoLoopAntesDoFinal) {
+                return;
+            }
+
+            if (musicaFundoAudio.currentTime >= musicaFundoAudio.duration - musicaFundoLoopAntesDoFinal) {
+                musicaFundoAudio.currentTime = musicaFundoLoopInicio;
+            }
+        }
+
+        musicaFundoAudio.addEventListener("timeupdate", reiniciarMusicaFundoSemFinal);
+        musicaFundoAudio.addEventListener("ended", function() {
+            if (!musicaFundoLigada) {
+                return;
+            }
+
+            musicaFundoAudio.currentTime = musicaFundoLoopInicio;
+            tocarMusicaFundo();
+        });
+
+        function pararDigitacaoConversa() {
+            if (conversaDigitacaoTimer) {
+                window.clearInterval(conversaDigitacaoTimer);
+                conversaDigitacaoTimer = null;
+            }
+            pararAudioDigitacaoConversa();
+        }
+
+        function tocarAudioDigitacaoConversa() {
+            if (!conversaDigitacaoAudio) {
+                return;
+            }
+
+            conversaDigitacaoAudio.currentTime = 0;
+            var playPromise = conversaDigitacaoAudio.play();
+            if (playPromise && typeof playPromise.catch === "function") {
+                playPromise.catch(function() {});
+            }
+        }
+
+        function pararAudioDigitacaoConversa() {
+            if (!conversaDigitacaoAudio) {
+                return;
+            }
+
+            conversaDigitacaoAudio.pause();
+            conversaDigitacaoAudio.currentTime = 0;
+        }
+
+        function tocarMusicaFundo() {
+            if (!musicaFundoPermitidaNoCard) {
+                musicaFundoPendente = true;
+                return;
+            }
+
+            if (!musicaFundoLigada) {
+                musicaFundoPendente = false;
+                return;
+            }
+
+            if (!musicaFundoCarregamentoConcluido || !musicaFundoLoadingVisualConcluido) {
+                musicaFundoPendente = true;
+                return;
+            }
+
+            if (!musicaFundoAudio || !musicaFundoAudio.paused) {
+                return;
+            }
+
+            var playPromise = musicaFundoAudio.play();
+            if (playPromise && typeof playPromise.catch === "function") {
+                playPromise.then(function() {
+                    musicaFundoPendente = false;
+                }).catch(function() {
+                    musicaFundoPendente = true;
+                });
+                return;
+            }
+
+            musicaFundoPendente = false;
+        }
+
+        function pararMusicaFundo() {
+            musicaFundoPendente = false;
+            if (!musicaFundoAudio) {
+                return;
+            }
+
+            musicaFundoAudio.pause();
+        }
+
+        function controlarMusicaPorCard(ativo) {
+            musicaFundoPermitidaNoCard = !!ativo;
+
+            if (musicaFundoPermitidaNoCard) {
+                tocarMusicaFundo();
+                return;
+            }
+
+            pararMusicaFundo();
+        }
+
+        window.addEventListener("message", function(event) {
+            if (!event.data || event.data.tipo !== "portfolio-game-visivel") {
+                return;
+            }
+
+            controlarMusicaPorCard(event.data.ativo);
+        });
+
+        function atualizarControleSom() {
+            if (controleSomImagem) {
+                controleSomImagem.src = musicaFundoLigada ? "assets/icons/som-on.png" : "assets/icons/som-off.png";
+            }
+
+            if (controleSom) {
+                controleSom.setAttribute(
+                    "aria-label",
+                    musicaFundoLigada ? "Desligar música de fundo" : "Ligar música de fundo"
+                );
+            }
+        }
+
+        function alternarMusicaFundo() {
+            musicaFundoLigada = !musicaFundoLigada;
+            atualizarControleSom();
+
+            if (musicaFundoLigada) {
+                tocarMusicaFundo();
+                return;
+            }
+
+            pararMusicaFundo();
+        }
+
+        function liberarMusicaAposLoadingVisual() {
+            musicaFundoLoadingVisualConcluido = true;
+            if (botaoStartInicio) {
+                botaoStartInicio.classList.add("is-ready");
+                botaoStartInicio.setAttribute("role", "button");
+                botaoStartInicio.setAttribute("tabindex", "0");
+            }
+            tocarMusicaFundo();
+        }
+
+        var loadingCaixa = document.querySelector(".loading-caixa");
+
+        if (loadingCaixa) {
+            loadingCaixa.addEventListener("click", function(event) {
+                if (event.target.closest(".start-inicio.is-ready")) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        }
+
+        function destravarMusicaFundo(event) {
+            if (
+                event &&
+                event.target &&
+                typeof event.target.closest === "function" &&
+                event.target.closest(".loading-caixa") &&
+                botaoStartInicio &&
+                !botaoStartInicio.classList.contains("is-ready")
+            ) {
+                return;
+            }
+
+            if (!musicaFundoPendente && musicaFundoAudio && !musicaFundoAudio.paused) {
+                return;
+            }
+
+            tocarMusicaFundo();
+        }
+
+        function esconderAcoesConversa() {
+            if (conversaInicialNext) {
+                conversaInicialNext.classList.remove("is-visible");
+            }
+            if (conversaInicialGo) {
+                conversaInicialGo.classList.remove("is-visible");
+            }
+        }
+
+        function mostrarAcaoConversa() {
+            esconderAcoesConversa();
+            if (conversaEtapaAtual < conversaTextos.length - 1) {
+                if (conversaInicialNext) {
+                    conversaInicialNext.classList.add("is-visible");
+                }
+                return;
+            }
+
+            if (conversaInicialGo) {
+                conversaInicialGo.classList.add("is-visible");
+            }
+        }
+
+        function iniciarDigitacaoConversa() {
+            if (!conversaInicialTexto) {
+                return;
+            }
+
+            pararDigitacaoConversa();
+            conversaTextoCompleto = conversaTextos[conversaEtapaAtual] || "";
+            conversaInicialTexto.textContent = "";
+            esconderAcoesConversa();
+
+            var indice = 0;
+            tocarAudioDigitacaoConversa();
+            conversaDigitacaoTimer = window.setInterval(function() {
+                if (!conversaInicialAberta) {
+                    pararDigitacaoConversa();
+                    return;
+                }
+
+                indice += 1;
+                conversaInicialTexto.textContent = conversaTextoCompleto.slice(0, indice);
+
+                if (indice >= conversaTextoCompleto.length) {
+                    pararDigitacaoConversa();
+                    mostrarAcaoConversa();
+                }
+            }, 34);
+        }
+
+        function bloquearMovimentoMapa(bloquear) {
+            if (game && typeof game.pause === "function") {
+                game.pause(!!bloquear);
+            }
+
+            if (window.LucasMapNavigation && typeof window.LucasMapNavigation.setCloudsPaused === "function") {
+                window.LucasMapNavigation.setCloudsPaused(!!bloquear);
+            }
+
+            if (window.LucasMapNavigation && typeof window.LucasMapNavigation.setProjectModalOpen === "function") {
+                window.LucasMapNavigation.setProjectModalOpen(bloquear);
+                return;
+            }
+
+            window.LucasProjectModalOpen = !!bloquear;
+        }
+
+        function abrirConversaInicial() {
+            if (!conversaInicialOverlay || conversaInicialAberta) {
+                return;
+            }
+
+            conversaInicialAberta = true;
+            conversaEtapaAtual = 0;
+            if (conversaInicialTexto) {
+                conversaInicialTexto.textContent = "";
+            }
+            esconderAcoesConversa();
+            conversaInicialOverlay.classList.add("is-visible");
+            conversaInicialOverlay.classList.add("is-entering");
+            conversaInicialOverlay.setAttribute("aria-hidden", "false");
+            window.setTimeout(function() {
+                if (!conversaInicialAberta || !conversaInicialOverlay) {
+                    return;
+                }
+
+                conversaInicialOverlay.classList.remove("is-entering");
+                bloquearMovimentoMapa(true);
+                iniciarDigitacaoConversa();
+            }, 420);
+        }
+
+        function fecharConversaInicial() {
+            if (!conversaInicialOverlay || !conversaInicialAberta) {
+                return;
+            }
+
+            conversaInicialAberta = false;
+            if (conversaInicialTimer) {
+                window.clearTimeout(conversaInicialTimer);
+                conversaInicialTimer = null;
+            }
+            pararDigitacaoConversa();
+            esconderAcoesConversa();
+            conversaInicialOverlay.classList.remove("is-visible");
+            conversaInicialOverlay.classList.remove("is-entering");
+            conversaInicialOverlay.setAttribute("aria-hidden", "true");
+            bloquearMovimentoMapa(false);
+        }
+
+        function avancarConversaInicial() {
+            var acaoVisivel = (conversaInicialNext && conversaInicialNext.classList.contains("is-visible")) ||
+                (conversaInicialGo && conversaInicialGo.classList.contains("is-visible"));
+
+            if (!acaoVisivel) {
+                return;
+            }
+
+            if (conversaEtapaAtual < conversaTextos.length - 1) {
+                conversaEtapaAtual += 1;
+                iniciarDigitacaoConversa();
+                return;
+            }
+
+            fecharConversaInicial();
+        }
+
+        function posicionarSobreFundo(elemento, larguraBase, alturaBase) {
+            if (!elemento) {
+                return null;
+            }
+
+            var escala = Math.max(window.innerWidth / larguraBase, window.innerHeight / alturaBase);
+            var larguraFundo = larguraBase * escala;
+            var alturaFundo = alturaBase * escala;
+            var margemX = (window.innerWidth - larguraFundo) / 2;
+            var margemY = (window.innerHeight - alturaFundo) / 2;
+
+            elemento.style.left = margemX + "px";
+            elemento.style.top = margemY + "px";
+            elemento.style.width = larguraBase + "px";
+            elemento.style.height = alturaBase + "px";
+            elemento.style.transform = "scale(" + escala + ")";
+            elemento.style.transformOrigin = "0 0";
+
+            return {
+                escala: escala,
+                margemX: margemX,
+                margemY: margemY
+            };
+        }
+
+        function ajustarLuzesCasa() {
+            posicionarSobreFundo(luzesCasa, 1672, 941);
+        }
+
+        function ajustarFumacaChamine() {
+            if (!fumacaChamine) {
+                return;
+            }
+
+            var larguraBase = 1920;
+            var alturaBase = 1080;
+            var larguraFumaca = 440;
+            var alturaFumaca = 310;
+            var escala = Math.max(window.innerWidth / larguraBase, window.innerHeight / alturaBase);
+            var larguraFundo = larguraBase * escala;
+            var alturaFundo = alturaBase * escala;
+            var margemX = (window.innerWidth - larguraFundo) / 2;
+            var margemY = (window.innerHeight - alturaFundo) / 2;
+
+            fumacaChamine.style.left = margemX + 8 * escala + "px";
+            fumacaChamine.style.top = margemY + 59 * escala + "px";
+            fumacaChamine.style.width = larguraFumaca + "px";
+            fumacaChamine.style.height = alturaFumaca + "px";
+            fumacaChamine.style.transform = "scale(" + escala + ")";
+            fumacaChamine.style.transformOrigin = "0 0";
+        }
+
+        ajustarLuzesCasa();
+        ajustarFumacaChamine();
+        window.setTimeout(liberarMusicaAposLoadingVisual, 1800);
+        window.addEventListener("resize", function() {
+            ajustarLuzesCasa();
+            ajustarFumacaChamine();
+        });
+
+        function terminarIntro() {
+            introTerminada = true;
+
+            if (!jogoPronto) {
+                iniciarQuandoPronto = true;
+                return;
+            }
+
+            telaInicialGame.style.display = "none";
+            iniciarJogoPendente();
+            conversaInicialTimer = window.setTimeout(abrirConversaInicial, 1000);
+        }
+
+        function iniciarJogo() {
+            if (jogoIniciado) {
+                return;
+            }
+
+            if (!botaoStartInicio || !botaoStartInicio.classList.contains("is-ready")) {
+                return;
+            }
+
+            jogoIniciado = true;
+            tocarMusicaFundo();
+            telaInicialGame.classList.add("inicio-andando");
+            personagemInicio.classList.add("andando");
+            window.setTimeout(terminarIntro, 2200);
+        }
+
+        botaoStartInicio.addEventListener("click", iniciarJogo);
+        botaoStartInicio.addEventListener("keydown", function(event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                iniciarJogo();
+            }
+        });
+
+        window.addEventListener("pointerdown", destravarMusicaFundo, true);
+        window.addEventListener("touchstart", destravarMusicaFundo, true);
+        window.addEventListener("keydown", destravarMusicaFundo, true);
+        document.addEventListener("dragstart", function(event) {
+            if (event.target && event.target.matches && event.target.matches("img, canvas, svg")) {
+                event.preventDefault();
+            }
+        }, true);
+        document.addEventListener("selectstart", function(event) {
+            if (event.target && event.target.matches && event.target.matches("img, canvas, svg")) {
+                event.preventDefault();
+            }
+        }, true);
+
+        if (controleSom) {
+            controleSom.addEventListener("click", function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                alternarMusicaFundo();
+            });
+        }
+
+        atualizarControleSom();
+
+        if (conversaInicialNext) {
+            conversaInicialNext.addEventListener("click", function(event) {
+                event.stopPropagation();
+                avancarConversaInicial();
+            });
+        }
+
+        if (conversaInicialGo) {
+            conversaInicialGo.addEventListener("click", function(event) {
+                event.stopPropagation();
+                avancarConversaInicial();
+            });
+        }
+
+        window.addEventListener("keydown", function(event) {
+            if (!conversaInicialAberta || event.key !== " ") {
+                return;
+            }
+
+            var acaoVisivel = (conversaInicialNext && conversaInicialNext.classList.contains("is-visible")) ||
+                (conversaInicialGo && conversaInicialGo.classList.contains("is-visible"));
+
+            if (!acaoVisivel) {
+                return;
+            }
+
+            event.preventDefault();
+            avancarConversaInicial();
+        });
+
+        //Initialization
+        var game = new gdjs.RuntimeGame(gdjs.projectData, {});
+
+        //Create a renderer
+        game.getRenderer().createStandardCanvas(document.body);
+        game.getRenderer().keepAspectRatio(false);
+
+        //Bind keyboards/mouse/touch events
+        game.getRenderer().bindStandardEvents(game.getInputManager(), window, document);
+
+        //Load all assets and start the game
+        game.loadAllAssets(function() {
+            jogoPronto = true;
+            musicaFundoCarregamentoConcluido = true;
+            tocarMusicaFundo();
+            iniciarJogoPendente = function() {
+                game.startGameLoop();
+            };
+
+            if (iniciarQuandoPronto && introTerminada) {
+                terminarIntro();
+            }
+        });
+    })();
+
+	</script>
+</body>
+</html>

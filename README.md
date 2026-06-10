@@ -14,8 +14,11 @@ Criar uma página de portfólio para reunir informações profissionais e acadê
 - CSS3
 - JavaScript
 - Three.js
+- Node.js e npm para rodar ferramentas de desenvolvimento
 - Git
 - GitHub
+
+O projeto não foi desenvolvido em Python. O Python pode ser usado apenas como uma forma simples de iniciar um servidor local para visualizar os arquivos estáticos no navegador.
 
 ## O que o projeto contém
 
@@ -51,14 +54,24 @@ portfolio-lucas-junio/
 
 ## Como abrir
 
-Para visualizar a página principal, abra o arquivo `index.html` no navegador.
-
-Se quiser rodar a prévia do cérebro holográfico em ambiente de desenvolvimento, instale as dependências e use o script:
+Para rodar o projeto em desenvolvimento, instale as dependências e inicie o servidor local:
 
 ```bash
 npm install
-npm run preview:cerebro
+npm run dev
 ```
+
+Depois, acesse o endereço mostrado no terminal.
+
+Para gerar a versão pronta para publicação:
+
+```bash
+npm run build
+```
+
+O build gera a pasta `docs/`, que pode ser publicada no GitHub Pages. Nessa versão publicada, o visitante consegue ver o site completo, incluindo o cérebro holográfico, sem precisar rodar nenhum comando.
+
+O projeto não é feito em Python. O Python pode ser usado apenas como alternativa simples para servir arquivos estáticos localmente, se necessário.
 
 ## Status
 

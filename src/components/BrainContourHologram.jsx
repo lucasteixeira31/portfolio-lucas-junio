@@ -5,6 +5,7 @@ import { Bloom, ChromaticAberration, EffectComposer, Noise } from "@react-three/
 import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 import "./BrainContourHologram.css";
+import brainModelUrl from "../../assets/images/brain_point_cloud.glb?url";
 
 const contourVertexShader = `
   uniform float uGlitch;
@@ -320,7 +321,7 @@ function BrainModel({ modelPath, scale = 1.85, rotationSpeed = (Math.PI * 2) / 3
 }
 
 export default function BrainContourHologram({
-  modelPath = "/assets/images/brain_point_cloud.glb",
+  modelPath = brainModelUrl,
   className,
   style,
   scale = 1.85
@@ -372,4 +373,4 @@ export default function BrainContourHologram({
   );
 }
 
-useGLTF.preload("/assets/images/brain_point_cloud.glb");
+useGLTF.preload(brainModelUrl);

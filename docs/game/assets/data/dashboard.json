@@ -1,0 +1,647 @@
+{
+  "fase1": {
+    "numero": 1,
+    "titulo": "Portfólio Pessoal",
+    "subtitulo": "Projeto: Portfólio Interativo",
+    "descricao": "Um mapa roxo em pixel art para apresentar projetos como fases jogáveis.",
+    "dificuldade": 3.5,
+    "status": "Em desenvolvimento",
+    "stats": {
+      "design": 90,
+      "codigo": 85,
+      "criatividade": 90,
+      "desempenho": 80,
+      "experiencia": 75
+    },
+    "etapas": [
+      {
+        "numero": "01",
+        "titulo": "Conceito",
+        "descricao": "Conceito, objetivos e planejamento.",
+        "status": "desbloqueado",
+        "link": "https://github.com/lucasteixeira31/portfolio-lucas-junio.git"
+      },
+      {
+        "numero": "02",
+        "titulo": "Prototipação",
+        "descricao": "Wireframes e estrutura do projeto.",
+        "status": "desbloqueado"
+      },
+      {
+        "numero": "03",
+        "titulo": "Desenvolvimento",
+        "descricao": "Codificação e implementação.",
+        "status": "desbloqueado"
+      },
+      {
+        "numero": "04",
+        "titulo": "Testes",
+        "descricao": "Validação, usabilidade e ajustes.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "05",
+        "titulo": "Publicação",
+        "descricao": "Deploy e lançamento do projeto.",
+        "status": "bloqueada",
+        "link": ""
+      }
+    ],
+    "equipamentos": [
+      {
+        "nome": "HTML",
+        "icone": "assets/icons/html_icon.JPG"
+      },
+      {
+        "nome": "CSS",
+        "icone": "assets/icons/css_icon.JPG"
+      },
+      {
+        "nome": "JavaScript",
+        "icone": "assets/icons/js_icon.JPG"
+      },
+      {
+        "nome": "GDevelop",
+        "icone": "assets/icons/G_icon.JPG"
+      },
+      {
+        "nome": "VS Code",
+        "icone": "assets/icons/vs_icon.JPG"
+      },
+      {
+        "nome": "GitHub",
+        "icone": "assets/icons/github_icon.JPG"
+      },
+      {
+        "nome": "Figma",
+        "icone": "assets/icons/figma_icon.JPG"
+      },
+      {
+        "nome": "Aseprite",
+        "icone": "assets/icons/aseprite_icon.JPG"
+      },
+      {
+        "nome": "Git",
+        "icone": "assets/icons/git_icon.JPG"
+      }
+    ],
+    "destaques": [
+      "Interatividade",
+      "Navegação por fases",
+      "Design retro",
+      "Layout responsivo"
+    ],
+    "conquistas": [
+      {
+        "titulo": "Projeto concluído",
+        "valor": "100 XP",
+        "icone": "assets/icons/projeto-concluido-icon.JPG"
+      },
+      {
+        "titulo": "Interativo",
+        "valor": "250 XP",
+        "icone": "assets/icons/interatividade-icon.JPG"
+      },
+      {
+        "titulo": "Páginas criadas",
+        "valor": "10 XP",
+        "icone": "assets/icons/paginas-criadas-icon.JPG"
+      },
+      {
+        "titulo": "Responsividade",
+        "valor": "100 XP",
+        "icone": "assets/icons/responsividade-icon.JPG"
+      }
+    ]
+  },
+  "fase2": {
+    "numero": 2,
+    "titulo": "Mapa Navegável",
+    "subtitulo": "Projeto: Rotas e Waypoints",
+    "descricao": "Sistema de caminho por etapas que guia o Lucas pela estrada sem pular fases.",
+    "dificuldade": 0,
+    "status": "Não iniciado",
+    "stats": {
+      "design": 0,
+      "codigo": 0,
+      "criatividade": 0,
+      "desempenho": 0,
+      "experiencia": 0
+    },
+    "etapas": [
+      {
+        "numero": "01",
+        "titulo": "Conceito",
+        "descricao": "Conceito, objetivos e planejamento.",
+        "status": "bloqueada",
+        "link": ""
+      },
+      {
+        "numero": "02",
+        "titulo": "Prototipação",
+        "descricao": "Wireframes e estrutura do projeto.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "03",
+        "titulo": "Desenvolvimento",
+        "descricao": "Codificação e implementação.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "04",
+        "titulo": "Testes",
+        "descricao": "Validação, usabilidade e ajustes.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "05",
+        "titulo": "Publicação",
+        "descricao": "Deploy e lançamento do projeto.",
+        "status": "bloqueada",
+        "link": ""
+      }
+    ],
+    "equipamentos": [
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/html_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/css_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/js_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/G_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/vs_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/github_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/figma_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/aseprite_icon.JPG"
+      }
+    ],
+    "destaques": [],
+    "conquistas": [
+      {
+        "titulo": "Projeto concluído",
+        "valor": "0 XP",
+        "icone": "assets/icons/projeto-concluido-icon.JPG"
+      },
+      {
+        "titulo": "Interativo",
+        "valor": "0 XP",
+        "icone": "assets/icons/interatividade-icon.JPG"
+      },
+      {
+        "titulo": "Páginas criadas",
+        "valor": "0 XP",
+        "icone": "assets/icons/paginas-criadas-icon.JPG"
+      },
+      {
+        "titulo": "Responsividade",
+        "valor": "0 xp",
+        "icone": "assets/icons/responsividade-icon.JPG"
+      }
+    ]
+  },
+  "fase3": {
+    "numero": 3,
+    "titulo": "Interface Pixel",
+    "subtitulo": "Projeto: UI do Game",
+    "descricao": "Elementos visuais integrados ao mapa, com placas, detalhes roxos e leitura clara.",
+    "dificuldade": 0,
+    "status": "Não iniciado",
+    "stats": {
+      "design": 0,
+      "codigo": 0,
+      "criatividade": 0,
+      "desempenho": 0,
+      "experiencia": 0
+    },
+    "etapas": [
+      {
+        "numero": "01",
+        "titulo": "Conceito",
+        "descricao": "Conceito, objetivos e planejamento.",
+        "status": "bloqueada",
+        "link": ""
+      },
+      {
+        "numero": "02",
+        "titulo": "Prototipação",
+        "descricao": "Wireframes e estrutura do projeto.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "03",
+        "titulo": "Desenvolvimento",
+        "descricao": "Codificação e implementação.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "04",
+        "titulo": "Testes",
+        "descricao": "Validação, usabilidade e ajustes.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "05",
+        "titulo": "Publicação",
+        "descricao": "Deploy e lançamento do projeto.",
+        "status": "bloqueada",
+        "link": ""
+      }
+    ],
+    "equipamentos": [
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/html_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/css_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/js_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/G_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/vs_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/github_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/figma_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/aseprite_icon.JPG"
+      }
+    ],
+    "destaques": [],
+    "conquistas": [
+      {
+        "titulo": "Projeto concluído",
+        "valor": "0 XP",
+        "icone": "assets/icons/projeto-concluido-icon.JPG"
+      },
+      {
+        "titulo": "Interativo",
+        "valor": "0 XP",
+        "icone": "assets/icons/interatividade-icon.JPG"
+      },
+      {
+        "titulo": "Páginas criadas",
+        "valor": "0 XP",
+        "icone": "assets/icons/paginas-criadas-icon.JPG"
+      },
+      {
+        "titulo": "Responsividade",
+        "valor": "0 xp",
+        "icone": "assets/icons/responsividade-icon.JPG"
+      }
+    ]
+  },
+  "fase4": {
+    "numero": 4,
+    "titulo": "Sistema de Controles",
+    "subtitulo": "Projeto: Clique e WASD",
+    "descricao": "Entrada por clique e teclado usando as mesmas rotas do mapa, sem movimento livre.",
+    "dificuldade": 0,
+    "status": "Não iniciado",
+    "stats": {
+      "design": 0,
+      "codigo": 0,
+      "criatividade": 0,
+      "desempenho": 0,
+      "experiencia": 0
+    },
+    "etapas": [
+      {
+        "numero": "01",
+        "titulo": "Conceito",
+        "descricao": "Conceito, objetivos e planejamento.",
+        "status": "bloqueada",
+        "link": ""
+      },
+      {
+        "numero": "02",
+        "titulo": "Prototipação",
+        "descricao": "Wireframes e estrutura do projeto.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "03",
+        "titulo": "Desenvolvimento",
+        "descricao": "Codificação e implementação.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "04",
+        "titulo": "Testes",
+        "descricao": "Validação, usabilidade e ajustes.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "05",
+        "titulo": "Publicação",
+        "descricao": "Deploy e lançamento do projeto.",
+        "status": "bloqueada",
+        "link": ""
+      }
+    ],
+    "equipamentos": [
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/html_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/css_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/js_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/G_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/vs_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/github_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/figma_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/aseprite_icon.JPG"
+      }
+    ],
+    "destaques": [],
+    "conquistas": [
+      {
+        "titulo": "Projeto concluído",
+        "valor": "0 XP",
+        "icone": "assets/icons/projeto-concluido-icon.JPG"
+      },
+      {
+        "titulo": "Interativo",
+        "valor": "0 XP",
+        "icone": "assets/icons/interatividade-icon.JPG"
+      },
+      {
+        "titulo": "Páginas criadas",
+        "valor": "0 XP",
+        "icone": "assets/icons/paginas-criadas-icon.JPG"
+      },
+      {
+        "titulo": "Responsividade",
+        "valor": "0 xp",
+        "icone": "assets/icons/responsividade-icon.JPG"
+      }
+    ]
+  },
+  "fase5": {
+    "numero": 5,
+    "titulo": "Polimento Visual",
+    "subtitulo": "Projeto: Estrada e Paradas",
+    "descricao": "Refino do caminho usando os pés do sprite como guia para centralizar na estrada.",
+    "dificuldade": 0,
+    "status": "Não iniciado",
+    "stats": {
+      "design": 0,
+      "codigo": 0,
+      "criatividade": 0,
+      "desempenho": 0,
+      "experiencia": 0
+    },
+    "etapas": [
+      {
+        "numero": "01",
+        "titulo": "Conceito",
+        "descricao": "Conceito, objetivos e planejamento.",
+        "status": "bloqueada",
+        "link": ""
+      },
+      {
+        "numero": "02",
+        "titulo": "Prototipação",
+        "descricao": "Wireframes e estrutura do projeto.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "03",
+        "titulo": "Desenvolvimento",
+        "descricao": "Codificação e implementação.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "04",
+        "titulo": "Testes",
+        "descricao": "Validação, usabilidade e ajustes.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "05",
+        "titulo": "Publicação",
+        "descricao": "Deploy e lançamento do projeto.",
+        "status": "bloqueada",
+        "link": ""
+      }
+    ],
+    "equipamentos": [
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/html_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/css_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/js_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/G_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/vs_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/github_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/figma_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/aseprite_icon.JPG"
+      }
+    ],
+    "destaques": [],
+    "conquistas": [
+      {
+        "titulo": "Projeto concluído",
+        "valor": "0 XP",
+        "icone": "assets/icons/projeto-concluido-icon.JPG"
+      },
+      {
+        "titulo": "Interativo",
+        "valor": "0 XP",
+        "icone": "assets/icons/interatividade-icon.JPG"
+      },
+      {
+        "titulo": "Páginas criadas",
+        "valor": "0 XP",
+        "icone": "assets/icons/paginas-criadas-icon.JPG"
+      },
+      {
+        "titulo": "Responsividade",
+        "valor": "0 xp",
+        "icone": "assets/icons/responsividade-icon.JPG"
+      }
+    ]
+  },
+  "fase6": {
+    "numero": 6,
+    "titulo": "Entrega Final",
+    "subtitulo": "Projeto: Publicação",
+    "descricao": "Fase de conclusão com ajustes finais, revisão do fluxo e experiência completa.",
+    "dificuldade": 0,
+    "status": "Não iniciado",
+    "stats": {
+      "design": 0,
+      "codigo": 0,
+      "criatividade": 0,
+      "desempenho": 0,
+      "experiencia": 0
+    },
+    "etapas": [
+      {
+        "numero": "01",
+        "titulo": "Conceito",
+        "descricao": "Conceito, objetivos e planejamento.",
+        "status": "bloqueada",
+        "link": ""
+      },
+      {
+        "numero": "02",
+        "titulo": "Prototipação",
+        "descricao": "Wireframes e estrutura do projeto.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "03",
+        "titulo": "Desenvolvimento",
+        "descricao": "Codificação e implementação.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "04",
+        "titulo": "Testes",
+        "descricao": "Validação, usabilidade e ajustes.",
+        "status": "bloqueada"
+      },
+      {
+        "numero": "05",
+        "titulo": "Publicação",
+        "descricao": "Deploy e lançamento do projeto.",
+        "status": "bloqueada",
+        "link": ""
+      }
+    ],
+    "equipamentos": [
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/html_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/css_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/js_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/G_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/vs_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/github_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/figma_icon.JPG"
+      },
+      {
+        "nome": "NULL",
+        "icone": "assets/icons/aseprite_icon.JPG"
+      }
+    ],
+    "destaques": [],
+    "conquistas": [
+      {
+        "titulo": "Projeto concluído",
+        "valor": "0 XP",
+        "icone": "assets/icons/projeto-concluido-icon.JPG"
+      },
+      {
+        "titulo": "Interativo",
+        "valor": "0 XP",
+        "icone": "assets/icons/interatividade-icon.JPG"
+      },
+      {
+        "titulo": "Páginas criadas",
+        "valor": "0 XP",
+        "icone": "assets/icons/paginas-criadas-icon.JPG"
+      },
+      {
+        "titulo": "Responsividade",
+        "valor": "0 xp",
+        "icone": "assets/icons/responsividade-icon.JPG"
+      }
+    ]
+  }
+}
